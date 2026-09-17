@@ -55,7 +55,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run lint typecheck
       - name: Migrate and seed the e2e database
-        run: pnpm --filter @ethanel/db migrate:deploy && pnpm --filter @ethanel/db seed
+        # The service's bootstrap role is a superuser, which bypasses row-level security; drop
+        # that first so the tenancy tests exercise the policies exactly as the app role does.
+        run: |
+          PGPASSWORD=ethanel psql -h 127.0.0.1 -U ethanel -d ethanel -c 'ALTER ROLE ethanel NOSUPERUSER NOBYPASSRLS CREATEDB'
+          pnpm --filter @ethanel/db migrate:deploy
+          pnpm --filter @ethanel/db seed
       - run: pnpm turbo run build
       - name: Install Playwright Chromium
         run: pnpm --filter @ethanel/testing exec playwright install --with-deps chromium

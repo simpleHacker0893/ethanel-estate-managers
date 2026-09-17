@@ -201,15 +201,21 @@ export async function organizationDashboard(
   organization: OrganizationSummary,
   client: Db = db(),
 ): Promise<OrganizationDashboard> {
-  return withScope(client, { organizationId: organization.id }, async (tx) => {
+  const organizationId = organization.id;
+  // Every query names the organization explicitly; RLS is the backstop, never the only filter.
+  return withScope(client, { organizationId }, async (tx) => {
     const [properties, latestDue, repairs] = await Promise.all([
       tx.property.findMany({
+        where: { organizationId },
         include: { landlord: true, units: { select: { status: true } } },
         orderBy: { name: 'asc' },
       }),
-      tx.posting.findFirst({ where: { kind: 'rent_due' }, orderBy: { postedAt: 'desc' } }),
+      tx.posting.findFirst({
+        where: { organizationId, kind: 'rent_due' },
+        orderBy: { postedAt: 'desc' },
+      }),
       tx.repairRequest.findMany({
-        where: { status: { not: 'closed' } },
+        where: { organizationId, status: { not: 'closed' } },
         include: { lease: { include: { unit: { include: { property: true } } } } },
         orderBy: { raisedAt: 'desc' },
         take: 10,
@@ -220,7 +226,11 @@ export async function organizationDashboard(
     if (latestDue) {
       const { from, to } = monthBounds(latestDue.postedAt);
       const postings = await tx.posting.findMany({
-        where: { postedAt: { gte: from, lt: to }, kind: { in: ['rent_due', 'payment'] } },
+        where: {
+          organizationId,
+          postedAt: { gte: from, lt: to },
+          kind: { in: ['rent_due', 'payment'] },
+        },
       });
       const due = postings.filter((p) => p.kind === 'rent_due');
       const paid = postings.filter((p) => p.kind === 'payment');
@@ -236,10 +246,14 @@ export async function organizationDashboard(
       };
     }
 
-    const recent = await tx.posting.findMany({ orderBy: { postedAt: 'desc' }, take: 8 });
+    const recent = await tx.posting.findMany({
+      where: { organizationId },
+      orderBy: { postedAt: 'desc' },
+      take: 8,
+    });
     const leaseIds = recent.map((p) => p.leaseId).filter((id): id is string => id !== null);
     const leases = await tx.lease.findMany({
-      where: { id: { in: leaseIds } },
+      where: { organizationId, id: { in: leaseIds } },
       include: { unit: { include: { property: true } } },
     });
     const leaseLabel = new Map(
@@ -295,6 +309,7 @@ export async function organizationMembers(
 ): Promise<readonly MemberLine[]> {
   return withScope(client, { organizationId }, async (tx) => {
     const memberships = await tx.membership.findMany({
+      where: { organizationId },
       include: { user: true },
       orderBy: { createdAt: 'asc' },
     });
