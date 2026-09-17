@@ -17,12 +17,31 @@ env:
   TURBO_TELEMETRY_DISABLED: 1
   NEXT_TELEMETRY_DISABLED: 1
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+  # Placeholder, production-format Clerk key for the CI build and the e2e server. The real
+  # instance keys live in the deployment environment, never in CI (see packages/testing/README.md).
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_live_Y2xlcmsuZXRoYW5lbC50ZXN0JA
+  NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
+  NEXT_PUBLIC_CLERK_SIGN_UP_URL: /sign-up
+  NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: /after-sign-in
+  NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: /after-sign-in
+  DATABASE_URL: postgresql://ethanel:ethanel@127.0.0.1:5432/ethanel
+  DATABASE_URL_UNPOOLED: postgresql://ethanel:ethanel@127.0.0.1:5432/ethanel
 
 jobs:
   verify:
     name: lint · typecheck · build · test
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ethanel
+          POSTGRES_PASSWORD: ethanel
+          POSTGRES_DB: ethanel
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ethanel" --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -32,6 +51,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run lint typecheck
+      - name: Migrate and seed the e2e database
+        run: pnpm --filter @ethanel/db migrate:deploy && pnpm --filter @ethanel/db seed
       - run: pnpm turbo run build
         env:
           GIT_SHA: ${{ github.sha }}
@@ -65,6 +86,7 @@ jobs:
           tags: ethanel/web:${{ github.sha }}
           build-args: |
             GIT_SHA=${{ github.sha }}
+            NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Trivy — block on HIGH/CRITICAL
