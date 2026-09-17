@@ -18,24 +18,23 @@ apps/web/
 │   │   ├── page.tsx                   Server. Composes _sections in order; generateMetadata; JSON-LD
 │   │   ├── opengraph-image.tsx        Server. ImageResponse 1200×630
 │   │   ├── _sections/                 Server: hero, doors, how-it-works, what-you-get, marketplace-preview, trust, pricing-teaser, final-cta
-│   │   ├── _components/               Server: rent-run-card, whatsapp-bubble, listing-card, ledger-illustration, eyebrow, section
+│   │   ├── _components/               Server: rent-run-card, whatsapp-bubble, ledger-illustration, section (+ Eyebrow), placeholder-page
 │   │   │                              Client: demo-form.tsx, marketplace-search-bar.tsx
 │   │   ├── actions/request-demo.ts    'use server'
 │   │   └── products|solutions|company|about|pricing|demo|careers|press|trust|privacy|terms|sign-in/page.tsx   Server placeholders
 │   ├── (marketplace)/marketplace/
 │   │   ├── page.tsx                   Server. Awaits searchParams inside <Suspense>; passes parsed params to cached results
-│   │   ├── _components/               Server: results-grid, listing-card (reused), empty-state, alerts-band
-│   │   │                              Client: marketplace-filters.tsx (nuqs), sort-select.tsx (inside filters)
-│   │   └── loading.tsx                Server. Skeleton grid
+│   │   └── _components/               Server: results-grid ('use cache', includes the empty state), alerts-band
+│   │                                  Client: marketplace-filters.tsx (nuqs, sort inside)
 │   ├── (app)/org/[orgSlug]/layout.tsx page.tsx   Server placeholders (live reads later)
 │   ├── (portal)/landlord/layout.tsx page.tsx     Server placeholders
 │   ├── (resident)/me/layout.tsx page.tsx         Server placeholders
 │   └── api/health/route.ts            GET → { ok: true, sha }
 ├── components/
-│   ├── site/                          Server: header.tsx, mega-menu.tsx, footer.tsx, logo.tsx  · Client: mobile-nav.tsx
-│   └── motion/reveal.tsx              Server wrapper emitting CSS-only entrance classes (no JS)
-├── content/landing.ts nav.ts listings.ts   typed copy and sample data
-├── lib/env.ts rate-limit.ts demo-requests.ts analytics.ts i18n/request.ts jsonld.ts
+│   ├── site/                          Server: header.tsx, mega-menu.tsx, footer.tsx, logo.tsx, nav-icon.tsx · Client: mobile-nav.tsx
+│   └── marketplace/listing-card.tsx   Server. Shared by the landing preview and the results page
+├── content/landing.ts nav.ts site.ts marketplace.ts listings.ts   typed copy and sample data
+├── lib/env.ts rate-limit.ts demo-requests.ts analytics.ts i18n/request.ts jsonld.ts listings.ts whatsapp.ts
 ├── messages/en.json
 ├── instrumentation.ts
 ├── next.config.ts  Dockerfile  .env.example  eslint.config.js  tsconfig.json  postcss.config.mjs
@@ -46,8 +45,8 @@ apps/web/
 Client files (exactly): `components/site/mobile-nav.tsx`, `(marketing)/_components/demo-form.tsx`,
 `(marketing)/_components/marketplace-search-bar.tsx`, `(marketplace)/marketplace/_components/marketplace-filters.tsx`,
 plus `app/error.tsx` and `app/global-error.tsx` (framework requirement). Everything else is a
-Server Component. Hover mega-menus are CSS `:hover`/`:focus-within` with a tiny inline script for
-Escape and focus return (no React state).
+Server Component. Hover mega-menus are CSS `:hover`/`:focus-within` with a tiny inline script (next/script) for
+Escape, focus return and `aria-expanded` (no React state).
 
 ## Caching
 
@@ -72,9 +71,10 @@ No `redirect()`.
 
 ## Motion
 
-CSS-only. `.reveal` elements start `opacity:0; translateY(12px)` and animate on first view using
-`animation-timeline: view()` where supported, with a `@supports not` fallback that renders them
-visible. Cards stagger via `--i` custom property × 60ms. `prefers-reduced-motion` disables all.
+CSS-only. `.reveal` elements animate from `opacity:0; translateY(12px)` on first view using
+`animation-timeline: view()` where supported; elsewhere they simply render visible. Cards stagger
+via the `--i` custom property × 60ms. `prefers-reduced-motion` disables all. The header's 92% +
+blur after 24px is a scroll-driven animation, so no scroll listener ships.
 
 ## Testing
 

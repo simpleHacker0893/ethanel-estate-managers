@@ -43,6 +43,11 @@ operator must confirm or correct. Nothing here appears in product copy as fact.
 - **Q-13** `// ASSUMPTION:` Marketplace results sort "Nearest" is a no-op in Sprint 001 (no
   geolocation); it falls back to "Newest" and is labelled as such in the empty-state helper.
 - **Q-14** `// ASSUMPTION:` "Kiswahili (coming)" is shown in the footer; no translation timeline.
+- **Q-19** `// ASSUMPTION:` Sample listing prices in `content/listings.ts` are whole-shilling
+  `number`s used only to filter and display marketing samples. Ledger money stays `bigint` minor
+  units; listing-svc will expose `priceMinor` as a string of minor units in its contract.
+- **Q-20** `// ASSUMPTION:` The chassis and web use ESLint 9 (the last line `eslint-plugin-jsx-a11y`
+  supports). Renovate will move the repo to ESLint 10 when that plugin publishes support.
 
 ## Product questions for later sprints
 

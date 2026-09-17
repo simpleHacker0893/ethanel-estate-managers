@@ -1,6 +1,10 @@
 {
   "extends": "@ethanel/config/tsconfig/node.json",
-  "compilerOptions": { "module": "ESNext", "moduleResolution": "bundler" },
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2023", "DOM"]
+  },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist", "playwright-report", "test-results"]
 }
