@@ -1,0 +1,17 @@
+{
+  "name": "@ethanel/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Prisma 7 schema-per-service conventions, migration runner and seed fixtures. Empty in Sprint 001.",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@ethanel/config": "workspace:*",
+    "@types/node": "^22.19.0",
+    "eslint": "^9.39.5",
+    "typescript": "^5.9.3"
+  }
+}

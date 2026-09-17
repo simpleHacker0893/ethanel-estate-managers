@@ -1,0 +1,76 @@
+name: Deploy staging
+
+# Trunk-based: every push to main builds images and rolls the staging namespace.
+# Skeleton for Sprint 001. The Helm library chart and the EKS cluster arrive in Sprint 002;
+# until then the deploy job is a no-op guarded by a repository variable.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+env:
+  AWS_REGION: eu-west-1
+  ECR_REPOSITORY: ethanel/web
+  HELM_NAMESPACE: ethanel-staging
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    if: vars.STAGING_DEPLOY_ENABLED == 'true'
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+      - uses: docker/setup-buildx-action@v3
+      - id: meta
+        run: echo "image=${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.image }}
+          build-args: |
+            GIT_SHA=${{ github.sha }}
+          provenance: true
+          sbom: true
+
+  helm-upgrade:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+        env:
+          EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
+      - uses: azure/setup-helm@v4
+      - name: helm upgrade --install web
+        run: |
+          helm upgrade --install web ./charts/service \
+            --namespace "$HELM_NAMESPACE" --create-namespace \
+            --set image.repository="${IMAGE%:*}" \
+            --set image.tag="${IMAGE##*:}" \
+            --values apps/web/helm/values.staging.yaml \
+            --atomic --timeout 5m
+        env:
+          IMAGE: ${{ needs.build-and-push.outputs.image }}

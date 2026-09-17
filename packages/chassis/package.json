@@ -1,0 +1,30 @@
+{
+  "name": "@ethanel/chassis",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Service chassis: config, structured logging, OpenTelemetry, probes, graceful shutdown, error envelope, internal JWT, pg-boss, Prisma base client with the RLS hook. Module surface stubbed in Sprint 001; implemented in Sprint 002.",
+  "exports": {
+    ".": "./index.ts",
+    "./ids": "./ids.ts",
+    "./config": "./config.ts",
+    "./logger": "./logger.ts",
+    "./otel": "./otel.ts",
+    "./probes": "./probes.ts",
+    "./shutdown": "./shutdown.ts",
+    "./errors": "./errors.ts",
+    "./internal-jwt": "./internal-jwt.ts",
+    "./jobs": "./jobs.ts",
+    "./db": "./db.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@ethanel/config": "workspace:*",
+    "@types/node": "^22.19.0",
+    "eslint": "^9.39.5",
+    "typescript": "^5.9.3"
+  }
+}

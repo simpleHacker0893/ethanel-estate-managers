@@ -1,0 +1,6 @@
+apiVersion: v2
+name: service
+description: Ethanel library chart. Every Deployment (web, gateway, nine services, four workers) inherits probes, requests/limits, PodDisruptionBudget, non-root read-only filesystem and a default-deny NetworkPolicy from here.
+type: library
+version: 0.1.0
+appVersion: '0.0.0'

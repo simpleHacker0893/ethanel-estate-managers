@@ -1,0 +1,33 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": [".env", "tsconfig.base.json"],
+  "globalEnv": ["NODE_ENV", "CI", "GIT_SHA"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "@ethanel/contracts#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env.example"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_WHATSAPP_NUMBER", "DEMO_WEBHOOK_URL"]
+    },
+    "@ethanel/contracts#build": {
+      "outputs": ["dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/types/**"]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["playwright-report/**", "test-results/**"]
+    },
+    "dev": {
+      "dependsOn": ["@ethanel/contracts#build"],
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

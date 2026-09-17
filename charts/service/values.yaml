@@ -1,0 +1,47 @@
+# Defaults every service inherits. Override per service in apps/<name>/helm/values.<env>.yaml.
+image:
+  repository: ''
+  tag: ''
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  port: 3000
+
+probes:
+  liveness: { path: /api/health, initialDelaySeconds: 5, periodSeconds: 10 }
+  readiness: { path: /api/health, initialDelaySeconds: 5, periodSeconds: 5 }
+  startup: { path: /api/health, failureThreshold: 30, periodSeconds: 2 }
+
+resources:
+  requests: { cpu: 100m, memory: 256Mi }
+  limits: { cpu: '1', memory: 512Mi }
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities: { drop: [ALL] }
+  seccompProfile: { type: RuntimeDefault }
+
+# Read-only root FS: only /tmp is writable, as an emptyDir.
+writableTmp: true
+
+networkPolicy:
+  enabled: true
+  # Default deny both directions; each service opts in to ingress from the gateway/ingress
+  # controller and egress to Neon, Valkey, the OTLP collector and DNS.
+  ingressFrom: []
+  egressTo: []
+
+terminationGracePeriodSeconds: 30
+
+env: []
+envFrom: []

@@ -1,0 +1,29 @@
+/*
+ * Ethanel Tailwind v4 preset: shared layer conventions only.
+ * Colour, type and radius tokens live in @ethanel/ui/theme.css so the storefront and
+ * dashboard both inherit them. Import this file after the theme.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@utility container-x {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem; /* 1280px */
+  padding-inline: 1.5rem; /* 24px */
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem; /* 40px */
+  }
+  @media (width >= 80rem) {
+    padding-inline: 5rem; /* 80px */
+  }
+}
+
+@utility section-y {
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+
+@utility grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 1.5rem; /* 24px gutter */
+}

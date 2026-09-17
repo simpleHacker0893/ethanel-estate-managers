@@ -1,0 +1,32 @@
+export default {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'scope-enum': [
+      2,
+      'always',
+      [
+        'web',
+        'gateway',
+        'ui',
+        'contracts',
+        'chassis',
+        'config',
+        'db',
+        'testing',
+        'charts',
+        'infra',
+        'ci',
+        'docs',
+        'deps',
+        'identity',
+        'property',
+        'listing',
+        'money',
+        'payments',
+        'messaging',
+        'ops',
+        'billing',
+      ],
+    ],
+  },
+};

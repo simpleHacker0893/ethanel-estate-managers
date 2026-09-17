@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits", "group:monorepos"],
+  "schedule": ["before 6am on monday"],
+  "timezone": "Africa/Nairobi",
+  "rangeStrategy": "bump",
+  "labels": ["deps"],
+  "packageRules": [
+    {
+      "description": "Next.js security releases are applied within 7 days. This group ignores the weekly schedule and is flagged as high priority.",
+      "matchPackageNames": ["next", "@next/eslint-plugin-next", "eslint-config-next"],
+      "groupName": "nextjs",
+      "schedule": ["at any time"],
+      "prPriority": 10,
+      "labels": ["deps", "priority:high", "security-window-7d"],
+      "minimumReleaseAge": "0 days"
+    },
+    {
+      "description": "React and the DOM renderer move together.",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+      "groupName": "react"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "dev tooling (minor/patch)"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "schedule": ["at any time"],
+    "prPriority": 20
+  },
+  "osvVulnerabilityAlerts": true
+}

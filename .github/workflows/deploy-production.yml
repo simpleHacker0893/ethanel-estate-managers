@@ -1,0 +1,52 @@
+name: Deploy production
+
+# Manual, gated by the `production` GitHub Environment (required reviewers configured there).
+# Promotes an image already built for staging by SHA. Never rebuilds.
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Commit SHA already deployed to staging
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: eu-west-1
+  ECR_REPOSITORY: ethanel/web
+  HELM_NAMESPACE: ethanel-production
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha }}
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+      - run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+        env:
+          EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
+      - uses: azure/setup-helm@v4
+      - name: helm upgrade --install web (production)
+        run: |
+          helm upgrade --install web ./charts/service \
+            --namespace "$HELM_NAMESPACE" --create-namespace \
+            --set image.repository="${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}" \
+            --set image.tag="${{ inputs.sha }}" \
+            --values apps/web/helm/values.production.yaml \
+            --atomic --timeout 10m
