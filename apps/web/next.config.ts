@@ -21,6 +21,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    // `forbidden()` from next/navigation renders app/forbidden.tsx with a real 403.
+    authInterrupts: true,
   },
 };
 

@@ -44,6 +44,12 @@ export function Header() {
           >
             {headerActions.signIn.label}
           </Link>
+          <Link
+            href={headerActions.signUp.href}
+            className="rounded-[8px] font-sans text-label-m font-semibold text-lavender-muted hover:text-pink-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-pink-500"
+          >
+            {headerActions.signUp.label}
+          </Link>
           <Button asChild variant="accent" size="compact">
             <Link href={headerActions.demo.href}>{headerActions.demo.label}</Link>
           </Button>
