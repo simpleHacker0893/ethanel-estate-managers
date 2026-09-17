@@ -1,0 +1,259 @@
+// One Prisma schema, three Postgres schemas: `identity`, `property`, `money`.
+// Rules (packages/db/README.md): one schema per service, no cross-schema foreign keys, every
+// tenant table carries organization_id under row-level security, keys are UUIDv7 generated in
+// application code, money is bigint minor units (KES cents).
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["identity", "property", "money"]
+}
+
+// ---------------------------------------------------------------- identity ------------------
+
+/// A customer of Ethanel: letting firm, land-selling company or landlord. The tenancy boundary.
+model Organization {
+  id                  String           @id @db.Uuid
+  slug                String           @unique
+  name                String
+  kind                OrganizationKind
+  /// Clerk organization id (`org_…`), written by the Clerk seed or the webhook sync.
+  clerkOrganizationId String?          @unique @map("clerk_organization_id")
+  createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz()
+
+  memberships Membership[]
+
+  @@map("organizations")
+  @@schema("identity")
+}
+
+/// A person who can sign in. Linked to Clerk by `clerk_user_id`; before the first sign-in the
+/// row exists by email only and is linked on first contact.
+model User {
+  id          String   @id @db.Uuid
+  email       String   @unique
+  fullName    String   @map("full_name")
+  phone       String?
+  /// Clerk user id (`user_…`). Null until the Clerk seed or first sign-in links it.
+  clerkUserId String?  @unique @map("clerk_user_id")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  memberships Membership[]
+
+  @@map("users")
+  @@schema("identity")
+}
+
+/// Staff membership of an organization. The authorization source of truth for `/org/[slug]`.
+model Membership {
+  id             String         @id @db.Uuid
+  organizationId String         @map("organization_id") @db.Uuid
+  userId         String         @map("user_id") @db.Uuid
+  role           MembershipRole
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz()
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("memberships")
+  @@schema("identity")
+}
+
+enum OrganizationKind {
+  letting_firm
+  land_company
+  landlord
+
+  @@schema("identity")
+}
+
+enum MembershipRole {
+  owner
+  admin
+  staff
+  caretaker
+
+  @@schema("identity")
+}
+
+// ---------------------------------------------------------------- property ------------------
+
+/// The owner an organization manages for. `user_id` is a denormalised copy of
+/// identity.users.id (no cross-schema FK) so the landlord portal can resolve its rows.
+model Landlord {
+  id             String   @id @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  /// identity.users.id of the landlord's sign-in, when they have one.
+  userId         String?  @map("user_id") @db.Uuid
+  name           String
+  phone          String?
+  /// Agency fee under the management agreement, in basis points of rent collected.
+  agencyFeeBps   Int      @map("agency_fee_bps")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  properties Property[]
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("landlords")
+  @@schema("property")
+}
+
+/// A building or estate containing units, or a land parcel containing plots.
+model Property {
+  id             String       @id @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  landlordId     String       @map("landlord_id") @db.Uuid
+  name           String
+  kind           PropertyKind
+  town           String
+  county         String
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz()
+
+  landlord Landlord @relation(fields: [landlordId], references: [id], onDelete: Restrict)
+  units    Unit[]
+
+  @@index([organizationId])
+  @@map("properties")
+  @@schema("property")
+}
+
+/// A lettable dwelling or shop inside a property.
+model Unit {
+  id             String     @id @db.Uuid
+  organizationId String     @map("organization_id") @db.Uuid
+  propertyId     String     @map("property_id") @db.Uuid
+  /// Copy of properties.landlord_id so the landlord RLS policy reads this table alone.
+  landlordId     String     @map("landlord_id") @db.Uuid
+  label          String
+  bedrooms       Int
+  /// Asking rent per month, KES cents.
+  rentMinor      BigInt     @map("rent_minor")
+  status         UnitStatus
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  leases   Lease[]
+
+  @@unique([propertyId, label])
+  @@index([organizationId])
+  @@index([landlordId])
+  @@map("units")
+  @@schema("property")
+}
+
+/// The agreement between an organization (for a landlord) and a resident for a unit.
+model Lease {
+  id             String      @id @db.Uuid
+  organizationId String      @map("organization_id") @db.Uuid
+  unitId         String      @map("unit_id") @db.Uuid
+  /// Copies of the unit's property and landlord so RLS policies never join across tables.
+  propertyId     String      @map("property_id") @db.Uuid
+  landlordId     String      @map("landlord_id") @db.Uuid
+  /// identity.users.id of the resident's sign-in, when they have one.
+  residentUserId String?     @map("resident_user_id") @db.Uuid
+  residentName   String      @map("resident_name")
+  residentPhone  String?     @map("resident_phone")
+  startsOn       DateTime    @map("starts_on") @db.Date
+  endsOn         DateTime?   @map("ends_on") @db.Date
+  /// Rent per month under this lease, KES cents.
+  rentMinor      BigInt      @map("rent_minor")
+  status         LeaseStatus
+
+  unit           Unit            @relation(fields: [unitId], references: [id], onDelete: Restrict)
+  repairRequests RepairRequest[]
+
+  @@index([organizationId])
+  @@index([residentUserId])
+  @@index([landlordId])
+  @@map("leases")
+  @@schema("property")
+}
+
+/// What a resident raises. Becomes a work order for a caretaker.
+model RepairRequest {
+  id             String              @id @db.Uuid
+  organizationId String              @map("organization_id") @db.Uuid
+  leaseId        String              @map("lease_id") @db.Uuid
+  title          String
+  status         RepairRequestStatus
+  raisedAt       DateTime            @map("raised_at") @db.Timestamptz()
+
+  lease Lease @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("repair_requests")
+  @@schema("property")
+}
+
+enum PropertyKind {
+  building
+  estate
+  land
+
+  @@schema("property")
+}
+
+enum UnitStatus {
+  occupied
+  vacant
+  notice
+
+  @@schema("property")
+}
+
+enum LeaseStatus {
+  active
+  notice
+  ended
+
+  @@schema("property")
+}
+
+enum RepairRequestStatus {
+  open
+  work_order
+  closed
+
+  @@schema("property")
+}
+
+// ---------------------------------------------------------------- money ---------------------
+
+/// One immutable ledger line. Never updated or deleted; a correction is a new posting whose
+/// `reverses_posting_id` points at the original. `lease_id` and `landlord_id` are denormalised
+/// copies of property-schema keys (no cross-schema FK).
+model Posting {
+  id                String      @id @db.Uuid
+  organizationId    String      @map("organization_id") @db.Uuid
+  leaseId           String?     @map("lease_id") @db.Uuid
+  landlordId        String?     @map("landlord_id") @db.Uuid
+  kind              PostingKind
+  /// KES cents. Positive; direction is given by `kind`.
+  amountMinor       BigInt      @map("amount_minor")
+  /// M-Pesa receipt, remittance reference, or the human note for a due posting.
+  reference         String
+  reversesPostingId String?     @map("reverses_posting_id") @db.Uuid
+  postedAt          DateTime    @map("posted_at") @db.Timestamptz()
+
+  @@index([organizationId, postedAt])
+  @@index([leaseId])
+  @@index([landlordId])
+  @@map("postings")
+  @@schema("money")
+}
+
+enum PostingKind {
+  rent_due
+  payment
+  agency_fee
+  remittance
+  reversal
+
+  @@schema("money")
+}

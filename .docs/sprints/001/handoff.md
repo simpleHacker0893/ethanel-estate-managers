@@ -6,6 +6,11 @@ Monorepo foundation, Operating Pack, design tokens, the landing page, the market
 on sample data, health route, Dockerfile, CI skeletons, Playwright + axe smoke tests.
 Verification record: see the final report in the pull request for `claude/happy-cray-itei24`.
 
+## Sprint 002 progress
+
+First slice delivered 2026-09-17: items 3 (data model only), 4 and 5 below, as ADR-001 records.
+See `sprints/002/status.md`.
+
 ## What Sprint 002 adds (in this order)
 
 1. **`@ethanel/chassis` implementation**: config, pino logger, OpenTelemetry, probes, graceful

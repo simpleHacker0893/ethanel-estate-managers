@@ -108,6 +108,17 @@ export function MobileNav() {
                 {headerActions.signIn.label}
               </Link>
             </li>
+            <li>
+              <Link
+                href={headerActions.signUp.href}
+                onClick={() => {
+                  setOpen(false);
+                }}
+                className="flex min-h-14 items-center rounded-[10px] px-2 text-label-m font-semibold text-ink hover:bg-mist-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pink-500"
+              >
+                {headerActions.signUp.label}
+              </Link>
+            </li>
           </ul>
         </nav>
 

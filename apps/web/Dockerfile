@@ -13,18 +13,27 @@ COPY apps/web/package.json apps/web/
 COPY packages/config/package.json packages/config/
 COPY packages/ui/package.json packages/ui/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/db/package.json packages/db/
 RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile --filter web... --ignore-scripts
 
 # ---- build ------------------------------------------------------------------------------------
 FROM deps AS build
 ARG GIT_SHA=unknown
-ENV NEXT_TELEMETRY_DISABLED=1 GIT_SHA=${GIT_SHA} NODE_ENV=production
+# Public Clerk configuration is inlined by `next build`; pass the instance's publishable key.
+ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+ENV NEXT_TELEMETRY_DISABLED=1 GIT_SHA=${GIT_SHA} NODE_ENV=production \
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} \
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up \
+    NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/after-sign-in \
+    NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/after-sign-in
 COPY packages/config packages/config
 COPY packages/ui packages/ui
 COPY packages/contracts packages/contracts
+COPY packages/db packages/db
 COPY apps/web apps/web
 RUN pnpm --filter @ethanel/contracts build \
+ && pnpm --filter @ethanel/db build \
  && pnpm --filter web build
 
 # ---- runtime: standalone output, non-root, read-only root FS ----------------------------------

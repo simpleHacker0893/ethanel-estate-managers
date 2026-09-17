@@ -1,18 +1,19 @@
 /**
- * @ethanel/db — conventions and tooling for schema-per-service on one Neon project.
- * Sprint 001: conventions documented in README.md; no schema, no client.
- * Sprint 002: `identity` schema, migration runner, RLS policy template, seed fixtures.
+ * @ethanel/db — Prisma 7 client, RLS scope helper, deterministic fixtures and the data-access
+ * layer the web BFF reads through. One Postgres schema per service (`identity`, `property`,
+ * `money`), no cross-schema joins, tenancy by `organization_id` + row-level security.
  */
-export const SCHEMA_PER_SERVICE = [
-  'identity',
-  'property',
-  'listing',
-  'money',
-  'payments',
-  'messaging',
-  'ops',
-  'docs',
-  'billing',
-] as const;
-
-export type ServiceSchema = (typeof SCHEMA_PER_SERVICE)[number];
+export { createDb, db, type Db } from './client';
+export { withScope, type Scope, type ScopedTx } from './scope';
+export * from './access';
+export {
+  DEMO_PASSWORD,
+  demoMemberships,
+  demoOrganizations,
+  demoUsers,
+  ids as fixtureIds,
+  type DemoMembership,
+  type DemoOrganization,
+  type DemoUser,
+  type Persona,
+} from './fixtures';

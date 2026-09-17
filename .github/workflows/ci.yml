@@ -17,12 +17,36 @@ env:
   TURBO_TELEMETRY_DISABLED: 1
   NEXT_TELEMETRY_DISABLED: 1
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+  # Placeholder, production-format Clerk key for the CI build and the e2e server. The real
+  # instance keys live in the deployment environment, never in CI (see packages/testing/README.md).
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_live_Y2xlcmsuZXRoYW5lbC50ZXN0JA
+  NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
+  NEXT_PUBLIC_CLERK_SIGN_UP_URL: /sign-up
+  NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: /after-sign-in
+  NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: /after-sign-in
+  # The e2e database role. Not the service's bootstrap superuser (which bypasses RLS): the
+  # "Migrate and seed" step creates this non-superuser role and makes it the database owner.
+  DATABASE_URL: postgresql://ethanel_app:ethanel@127.0.0.1:5432/ethanel
+  DATABASE_URL_UNPOOLED: postgresql://ethanel_app:ethanel@127.0.0.1:5432/ethanel
+  # Job-wide so the build hash is identical in the build and test steps (turbo re-ran web#build
+  # under the test step when only that step had GIT_SHA, racing Playwright's next start).
+  GIT_SHA: ${{ github.sha }}
 
 jobs:
   verify:
     name: lint · typecheck · build · test
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ethanel
+          POSTGRES_PASSWORD: ethanel
+          POSTGRES_DB: ethanel
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ethanel" --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -32,9 +56,18 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run lint typecheck
+      - name: Migrate and seed the e2e database
+        # The service's bootstrap role is a superuser and bypasses row-level security, so the
+        # app connects as a plain role that owns the database: FORCE RLS then applies to it and
+        # the tenancy tests exercise the policies exactly as the deployed app role does.
+        run: |
+          PGPASSWORD=ethanel psql -h 127.0.0.1 -U ethanel -d ethanel -v ON_ERROR_STOP=1 \
+            -c "CREATE ROLE ethanel_app LOGIN PASSWORD 'ethanel' NOSUPERUSER NOBYPASSRLS" \
+            -c "ALTER DATABASE ethanel OWNER TO ethanel_app" \
+            -c "ALTER SCHEMA public OWNER TO ethanel_app"
+          pnpm --filter @ethanel/db migrate:deploy
+          pnpm --filter @ethanel/db seed
       - run: pnpm turbo run build
-        env:
-          GIT_SHA: ${{ github.sha }}
       - name: Install Playwright Chromium
         run: pnpm --filter @ethanel/testing exec playwright install --with-deps chromium
         env:
@@ -65,10 +98,11 @@ jobs:
           tags: ethanel/web:${{ github.sha }}
           build-args: |
             GIT_SHA=${{ github.sha }}
+            NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Trivy — block on HIGH/CRITICAL
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ethanel/web:${{ github.sha }}
           format: sarif

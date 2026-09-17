@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { MarketplaceSearchBar } from '@/app/(marketing)/_components/marketplace-search-bar';
+import { DemoAccounts } from '@/app/(marketing)/_sections/demo-accounts';
 import { Doors } from '@/app/(marketing)/_sections/doors';
 import { FinalCta } from '@/app/(marketing)/_sections/final-cta';
 import { Hero } from '@/app/(marketing)/_sections/hero';
@@ -45,6 +46,7 @@ export default function LandingPage() {
       <MarketplacePreview searchBar={<MarketplaceSearchBar />} />
       <Trust />
       <PricingTeaser />
+      <DemoAccounts />
       <FinalCta />
     </>
   );

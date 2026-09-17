@@ -3,15 +3,40 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Prisma 7 schema-per-service conventions, migration runner and seed fixtures. Empty in Sprint 001.",
+  "description": "Prisma 7 client on Neon: identity, property and money schemas, RLS scope helper, forward-only migrations, deterministic seed fixtures and the data-access layer.",
   "scripts": {
+    "build": "prisma generate",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "prisma generate && tsc --noEmit -p tsconfig.json",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:status": "prisma migrate status",
+    "seed": "tsx seed.ts",
+    "seed:sql": "tsx scripts/seed-sql.ts",
+    "seed:clerk": "tsx scripts/seed-clerk.ts"
   },
   "devDependencies": {
+    "@clerk/backend": "^3.18.1",
     "@ethanel/config": "workspace:*",
     "@types/node": "^22.19.0",
+    "@types/pg": "^8.23.1",
+    "dotenv": "^17.4.2",
     "eslint": "^9.39.5",
+    "prisma": "7.10.0",
+    "tsx": "^4.23.13",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@prisma/adapter-neon": "7.10.0",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "pg": "^8.23.0"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./fixtures": "./fixtures.ts",
+    "./client": "./client.ts",
+    "./scope": "./scope.ts",
+    "./access": "./access.ts"
   }
 }
