@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@ethanel/ui/components/button';
 import { cn } from '@ethanel/ui/lib/cn';
 
+import { whatsappIntros } from '@/content/whatsapp';
 import { whatsappContact } from '@/lib/whatsapp';
 
 export type ListingIntent = 'rent' | 'sale' | 'land' | 'lease' | 'short-stay';
@@ -43,7 +44,7 @@ const gradient = {
 
 /** Server. Marketplace listing card; the photo is a next/image slot with a gradient placeholder. */
 export function ListingCard(p: ListingCardProps) {
-  const whatsapp = whatsappContact();
+  const whatsapp = whatsappContact(whatsappIntros.listingEnquiry({ title: p.title, id: p.id }));
   return (
     <article
       className="flex card-hover flex-col overflow-hidden card text-ink"
@@ -95,22 +96,15 @@ export function ListingCard(p: ListingCardProps) {
             {p.viewingLabel}
           </Link>
           <Button
-            asChild={Boolean(whatsapp.href)}
+            asChild
             variant="secondary"
             size="compact"
             className="max-w-full min-w-0 px-3.5 text-[14px] [&_svg]:size-[18px]"
           >
-            {whatsapp.href ? (
-              <a href={whatsapp.href}>
-                <MessageCircleIcon className="text-whatsapp" aria-hidden="true" />
-                {p.whatsappLabel} {whatsapp.display}
-              </a>
-            ) : (
-              <>
-                <MessageCircleIcon className="text-whatsapp" aria-hidden="true" />
-                {p.whatsappLabel} {whatsapp.display}
-              </>
-            )}
+            <a href={whatsapp.href} target="_blank" rel="noopener noreferrer">
+              <MessageCircleIcon className="text-whatsapp" aria-hidden="true" />
+              {p.whatsappLabel} {whatsapp.display}
+            </a>
           </Button>
         </div>
       </div>

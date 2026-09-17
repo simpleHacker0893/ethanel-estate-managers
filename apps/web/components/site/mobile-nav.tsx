@@ -15,6 +15,8 @@ import { Sheet, SheetContent, SheetTrigger } from '@ethanel/ui/components/sheet'
 
 import { headerActions, navGroups, topLevelLinks } from '@/content/nav';
 
+import { Logo } from './logo';
+
 import { NavIconBadge } from './nav-icon';
 
 /**
@@ -36,8 +38,8 @@ export function MobileNav() {
         </button>
       </SheetTrigger>
       <SheetContent side="right" title="Menu" description="Site navigation">
-        <div className="flex h-14 shrink-0 items-center border-b border-mist-100 px-5 font-display text-[20px] font-semibold text-ink">
-          Ethanel
+        <div className="flex h-14 shrink-0 items-center border-b border-mist-100 px-5">
+          <Logo tone="light" />
         </div>
 
         <nav aria-label="Main" className="min-h-0 flex-1 overflow-y-auto px-3 py-2">

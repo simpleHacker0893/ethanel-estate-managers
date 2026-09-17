@@ -40,7 +40,21 @@ export default function OpenGraphImage() {
         >
           E
         </div>
-        <div style={{ fontSize: 36, fontWeight: 600, letterSpacing: -0.5 }}>{site.name}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ fontSize: 36, fontWeight: 600, letterSpacing: -0.5 }}>{site.wordmark}</div>
+          <div
+            style={{
+              fontSize: 14,
+              letterSpacing: 3,
+              textTransform: 'uppercase',
+              color: '#B7B3D1',
+              fontFamily: 'sans-serif',
+              fontWeight: 700,
+            }}
+          >
+            {site.wordmarkSub}
+          </div>
+        </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div

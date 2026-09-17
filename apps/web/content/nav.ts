@@ -288,5 +288,5 @@ export const topLevelLinks: readonly { label: string; href: Route }[] = [
 
 export const headerActions = {
   signIn: { label: 'Sign in', href: '/sign-in' as Route },
-  demo: { label: 'Book a demo', href: '/#demo' as Route },
+  demo: { label: 'Book a demo', href: '/demo' as Route },
 } as const;

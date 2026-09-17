@@ -8,7 +8,12 @@
       "dependsOn": ["^build", "@ethanel/contracts#build"],
       "inputs": ["$TURBO_DEFAULT$", ".env.example"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_WHATSAPP_NUMBER", "DEMO_WEBHOOK_URL"]
+      "env": [
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_WHATSAPP_NUMBER",
+        "DEMO_WEBHOOK_URL",
+        "UNSPLASH_ACCESS_KEY"
+      ]
     },
     "@ethanel/contracts#build": {
       "outputs": ["dist/**"]

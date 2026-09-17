@@ -17,7 +17,14 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Listing photos are served from the listing-svc object store (Sprint 003+).
       { protocol: 'https', hostname: 'images.ethanel.co.ke' },
+      // Scene photos resolved through the Unsplash API (hotlinked per Unsplash guidelines).
+      { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
+  },
+  cacheLife: {
+    // A scene photo that could not be resolved (no key, network error) is cached only briefly.
+    // expire < 5 min keeps it out of the static shell, so it streams as a hole and retries soon.
+    imageMiss: { stale: 30, revalidate: 60, expire: 240 },
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],

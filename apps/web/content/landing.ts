@@ -12,7 +12,7 @@ export const landing = {
     title: 'Rent in. Landlords paid. Every shilling accounted for.',
     subtitle:
       'Ethanel runs your letting business end to end — leases, M-Pesa rent collection, repair requests and landlord remittances — on WhatsApp, the channel your residents already use.',
-    primaryCta: { label: 'Book a demo', href: '/#demo' as Route },
+    primaryCta: { label: 'Book a demo', href: '/demo' as Route },
     secondaryCta: { label: 'Find a home or plot', href: '/marketplace' as Route },
     launchLine: 'Launching in Nairobi, Kiambu, Kajiado and Machakos',
     chips: [
