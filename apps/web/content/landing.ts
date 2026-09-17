@@ -161,41 +161,8 @@ export const landing = {
     note: 'Prices and listings shown are samples for illustration.',
     viewingCta: 'Book a viewing',
     whatsappCta: 'WhatsApp',
-    listings: [
-      {
-        id: 'sample-kilimani-2bed',
-        chip: '2-bed unit · To let',
-        intent: 'rent',
-        price: 'KES 45,000',
-        per: '/ month',
-        title: 'Bright two-bedroom with balcony, borehole water',
-        location: 'Kilimani, Nairobi',
-        agency: 'Riverside Lettings',
-        photo: 'a',
-      },
-      {
-        id: 'sample-kitengela-plot',
-        chip: 'Plot · For sale',
-        intent: 'land',
-        price: 'KES 2,400,000',
-        per: '',
-        title: '1/8 acre residential plot, tarmac access',
-        location: 'Kitengela, Kajiado',
-        agency: 'Savannah Land Co.',
-        photo: 'b',
-      },
-      {
-        id: 'sample-ruiru-3bed',
-        chip: '3-bed home · For sale',
-        intent: 'sale',
-        price: 'KES 9,800,000',
-        per: '',
-        title: 'Three-bedroom maisonette in a gated court',
-        location: 'Ruiru, Kiambu',
-        agency: 'Kiambu Homes Agency',
-        photo: 'c',
-      },
-    ] as const,
+    /** Three cards from content/listings.ts (the same sample data the marketplace uses). */
+    listingIds: ['rl-kilimani-2bed', 'sl-kitengela-plot', 'kh-ruiru-3bed'] as const,
   },
 
   trust: {
