@@ -58,7 +58,7 @@ export const landing = {
         'Rent runs over M-Pesa, every payment allocated to the right lease',
         'Landlord statements and remittances on the day the agreement says',
       ],
-      cta: { label: 'See how it works for agencies', href: '/solutions' as Route },
+      cta: { label: 'See how it works for agencies', href: '/solutions/letting-firms' as Route },
     },
     residents: {
       eyebrow: 'For residents and buyers',

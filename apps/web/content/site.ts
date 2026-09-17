@@ -38,11 +38,11 @@ export const footerColumns: readonly FooterColumn[] = [
   {
     heading: 'Solutions',
     links: [
-      { label: 'Letting firms', href: '/solutions' },
-      { label: 'Land-selling companies', href: '/solutions' },
-      { label: 'Landlords', href: '/solutions' },
-      { label: 'Caretakers', href: '/solutions' },
-      { label: 'Residents', href: '/solutions' },
+      { label: 'Letting firms', href: '/solutions/letting-firms' },
+      { label: 'Land-selling companies', href: '/solutions/land-selling-companies' },
+      { label: 'Landlords', href: '/solutions/landlords' },
+      { label: 'Caretakers', href: '/solutions/caretakers' },
+      { label: 'Residents', href: '/solutions/residents' },
     ],
   },
   {
