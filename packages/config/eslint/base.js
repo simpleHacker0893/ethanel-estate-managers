@@ -1,4 +1,7 @@
 // @ts-check
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import boundaries from 'eslint-plugin-boundaries';
@@ -24,6 +27,9 @@ const boundaryElements = [
   { type: 'worker', pattern: 'workers/*', capture: ['name'] },
 ];
 
+/** Element patterns resolve against the repository root, whichever package ESLint runs from. */
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
+
 const internalPackageSpecifiers = ['@ethanel/*'];
 const appSpecifiers = ['web', 'gateway'];
 
@@ -31,9 +37,25 @@ export const boundariesConfig = {
   files: ['**/*.ts', '**/*.tsx'],
   plugins: { boundaries },
   settings: {
+    'boundaries/root-path': repoRoot,
     'boundaries/elements': boundaryElements,
     'boundaries/ignore': ['**/node_modules/**', '**/dist/**', '**/.next/**'],
     'boundaries/dependency-nodes': ['import', 'dynamic-import', 'require', 'export'],
+    // The plugin classifies an import by resolving it to a file. Workspace packages and `@/`
+    // aliases only resolve through TypeScript, so use the TS resolver (node as fallback).
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        noWarnOnMultipleProjects: true,
+        project: [
+          `${repoRoot}/apps/*/tsconfig.json`,
+          `${repoRoot}/packages/*/tsconfig.json`,
+          `${repoRoot}/services/*/tsconfig.json`,
+          `${repoRoot}/workers/*/tsconfig.json`,
+        ],
+      },
+      node: { extensions: ['.js', '.mjs', '.cjs', '.ts', '.tsx', '.json'] },
+    },
   },
   rules: {
     'boundaries/no-unknown-files': 'off',
@@ -43,8 +65,8 @@ export const boundariesConfig = {
       {
         default: 'disallow',
         message:
-          '{{file.type}} may not import from {{dependency.type}}. ' +
-          'Apps, services and workers import packages/* only; packages/contracts imports nothing internal.',
+          'Architectural boundary: apps, services and workers import packages/* only; ' +
+          'packages/contracts imports nothing internal; nothing imports an app.',
         policies: [
           // Relative / path-alias imports between elements.
           {
@@ -57,10 +79,8 @@ export const boundariesConfig = {
             disallow: { to: { module: { origin: 'external', source: internalPackageSpecifiers } } },
           },
           { disallow: { to: { module: { origin: 'external', source: appSpecifiers } } } },
-          // Every other external module is fine.
+          // Every other external module is fine. Imports within one element are never reported.
           { allow: { to: { module: { origin: 'external' } } } },
-          // Files inside the same element may import each other freely.
-          { allow: { to: { element: { internal: true } } } },
         ],
       },
     ],

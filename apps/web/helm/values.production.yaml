@@ -1,0 +1,17 @@
+# apps/web on charts/service, production namespace. Consumed by .github/workflows/deploy-production.yml.
+replicaCount: 3
+service:
+  port: 3000
+probes:
+  liveness: { path: /api/health, initialDelaySeconds: 5, periodSeconds: 10 }
+  readiness: { path: /api/health, initialDelaySeconds: 5, periodSeconds: 5 }
+  startup: { path: /api/health, failureThreshold: 30, periodSeconds: 2 }
+resources:
+  requests: { cpu: 250m, memory: 384Mi }
+  limits: { cpu: '1', memory: 768Mi }
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+env:
+  - name: NEXT_PUBLIC_SITE_URL
+    valueFrom: { configMapKeyRef: { name: web-public, key: NEXT_PUBLIC_SITE_URL } }
