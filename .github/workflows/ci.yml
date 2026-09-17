@@ -26,6 +26,9 @@ env:
   NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: /after-sign-in
   DATABASE_URL: postgresql://ethanel:ethanel@127.0.0.1:5432/ethanel
   DATABASE_URL_UNPOOLED: postgresql://ethanel:ethanel@127.0.0.1:5432/ethanel
+  # Job-wide so the build hash is identical in the build and test steps (turbo re-ran web#build
+  # under the test step when only that step had GIT_SHA, racing Playwright's next start).
+  GIT_SHA: ${{ github.sha }}
 
 jobs:
   verify:
@@ -54,8 +57,6 @@ jobs:
       - name: Migrate and seed the e2e database
         run: pnpm --filter @ethanel/db migrate:deploy && pnpm --filter @ethanel/db seed
       - run: pnpm turbo run build
-        env:
-          GIT_SHA: ${{ github.sha }}
       - name: Install Playwright Chromium
         run: pnpm --filter @ethanel/testing exec playwright install --with-deps chromium
         env:

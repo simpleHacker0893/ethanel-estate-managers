@@ -31,7 +31,7 @@
       "outputs": [".next/types/**"]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "web#build"],
       "outputs": ["playwright-report/**", "test-results/**"],
       "env": ["DATABASE_URL", "CLERK_SECRET_KEY", "CLERK_JWT_KEY", "PLAYWRIGHT_CHROMIUM_EXECUTABLE"]
     },
