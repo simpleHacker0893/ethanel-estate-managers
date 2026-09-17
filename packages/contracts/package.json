@@ -16,6 +16,26 @@
     "./demo-request": {
       "types": "./dist/demo-request.d.ts",
       "default": "./dist/demo-request.js"
+    },
+    "./phone": {
+      "types": "./dist/phone.d.ts",
+      "default": "./dist/phone.js"
+    },
+    "./listing": {
+      "types": "./dist/listing.d.ts",
+      "default": "./dist/listing.js"
+    },
+    "./contact-request": {
+      "types": "./dist/contact-request.d.ts",
+      "default": "./dist/contact-request.js"
+    },
+    "./demo-questionnaire": {
+      "types": "./dist/demo-questionnaire.d.ts",
+      "default": "./dist/demo-questionnaire.js"
+    },
+    "./assistant": {
+      "types": "./dist/assistant.d.ts",
+      "default": "./dist/assistant.js"
     }
   },
   "files": [
