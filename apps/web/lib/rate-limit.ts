@@ -55,6 +55,22 @@ export const demoRateLimiter: RateLimiter = createInMemoryRateLimiter({
   limit: 5,
   windowSeconds: 600,
 });
+export const contactRateLimiter: RateLimiter = createInMemoryRateLimiter({
+  limit: 5,
+  windowSeconds: 600,
+});
+export const questionnaireRateLimiter: RateLimiter = createInMemoryRateLimiter({
+  limit: 3,
+  windowSeconds: 600,
+});
+export const assistantChatLimiter: RateLimiter = createInMemoryRateLimiter({
+  limit: 30,
+  windowSeconds: 600,
+});
+export const assistantMediaLimiter: RateLimiter = createInMemoryRateLimiter({
+  limit: 20,
+  windowSeconds: 600,
+});
 
 /** First hop of X-Forwarded-For, else X-Real-IP, else "unknown". */
 export function clientIpFrom(headers: Headers): string {

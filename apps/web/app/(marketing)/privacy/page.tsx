@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
 
-import { PlaceholderPage } from '@/app/(marketing)/_components/placeholder-page';
+import { ContentPage } from '@/app/(marketing)/_components/content-page';
+import { privacy } from '@/content/legal';
 
-export const metadata: Metadata = { title: 'Privacy policy.' };
+export const metadata: Metadata = { title: privacy.title };
 
-/** Server. Placeholder; the designed page ships in a later sprint. */
-export default function Page() {
-  return (
-    <PlaceholderPage
-      eyebrow="Privacy"
-      title="Privacy policy."
-      body="The full policy is being finalised with counsel."
-    />
-  );
+/** Server. Draft privacy policy pending counsel. */
+export default function PrivacyPage() {
+  return <ContentPage {...privacy} />;
 }
