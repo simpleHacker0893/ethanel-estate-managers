@@ -21,6 +21,10 @@ pnpm turbo run lint typecheck build
 pnpm --filter web dev
 ```
 
+Sign-in (Clerk) and live data (Neon + Prisma 7) need `apps/web/.env.local`; see
+`apps/web/.env.example`, `packages/db/README.md` and `.docs/sprints/002/status.md` for the
+migrate, seed and Clerk demo-account steps.
+
 ## Layout
 
 ```
@@ -28,7 +32,7 @@ apps/web        Next.js 16 App Router (BFF, Server Actions only)
 apps/gateway    Fastify: public /v1 REST, API keys, all inbound webhooks (placeholder)
 services/*      nine Fastify domain services on packages/chassis (placeholders)
 workers/*       four pg-boss workers (placeholders)
-packages/*      contracts · chassis · ui · config · db · testing
+packages/*      contracts · chassis · ui · config · db (Prisma 7, RLS, fixtures) · testing
 charts/service  Helm library chart every Deployment inherits
 infra/*         OpenTofu modules
 .docs/          Operating Pack

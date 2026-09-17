@@ -52,6 +52,25 @@ operator must confirm or correct. Nothing here appears in product copy as fact.
 - **Q-20** `// ASSUMPTION:` The chassis and web use ESLint 9 (the last line `eslint-plugin-jsx-a11y`
   supports). Renovate will move the repo to ESLint 10 when that plugin publishes support.
 
+## Assumptions made in Sprint 002 (first slice)
+
+- **Q-22** `// ASSUMPTION:` `apps/web` reads Neon directly through `@ethanel/db` until
+  `identity-svc`, `property-svc` and `money-svc` exist (ADR-001). Remove when the services land.
+- **Q-23** `// ASSUMPTION:` Demo agency fees (8% and 10% in basis points on the seeded management
+  agreements) are sample values so the landlord statement has a figure. No real default exists.
+- **Q-24** `// ASSUMPTION:` Clerk organization roles map `owner`/`admin` → `org:admin` and
+  `staff`/`caretaker` → `org:member`; the finer role lives in `identity.memberships.role`.
+  Landlords and residents are Clerk users without an organization membership. (Answers Q-15 for
+  now; a caretaker can belong to more than one organization by having more than one row.)
+- **Q-25** `// ASSUMPTION:` Demo accounts share one password shown on the landing page. Accept the
+  risk for a sandbox instance; production instances must not seed these accounts.
+- **Q-26** `// ASSUMPTION:` The Neon compute (`ap-southeast-1`) is reachable from the runtime over
+  the `-pooler` endpoint with the WebSocket serverless driver; migrations use the direct endpoint.
+
+- **Q-27** `// ASSUMPTION:` A refused request to a signed-in surface renders the forbidden page
+  with HTTP 200 (Cache Components streams the response before the layout guard resolves).
+  Acceptable for a page; revisit if an API consumer or a crawler needs the real status.
+
 ## Product questions for later sprints
 
 - **Q-15** Which Clerk organization roles map to owner / staff / caretaker, and can a caretaker
