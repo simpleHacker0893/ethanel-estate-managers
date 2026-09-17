@@ -1,0 +1,10 @@
+{
+  "extends": "@ethanel/config/tsconfig/library.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "incremental": false
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

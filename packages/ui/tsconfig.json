@@ -1,0 +1,6 @@
+{
+  "extends": "@ethanel/config/tsconfig/next.json",
+  "compilerOptions": { "plugins": [] },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

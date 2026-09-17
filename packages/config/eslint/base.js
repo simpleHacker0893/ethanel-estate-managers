@@ -6,17 +6,15 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 /**
- * Architectural boundaries, encoded in tooling rather than prose.
+ * Architectural boundaries, encoded in tooling rather than prose (eslint-plugin-boundaries v7).
  *
  *   apps/*        may import packages/* only. Never another app, service or worker.
  *   services/*    may import packages/* only. Never another service, app or worker.
  *   workers/*     may import packages/* only.
  *   packages/contracts imports nothing internal (it is the single source of truth).
- *   packages/*    may import other packages, except that nothing imports from an app.
+ *   packages/*    may import other packages; nothing imports an app.
  *
- * Element roots are resolved from the repository root, so this config must be consumed from a
- * package whose eslint.config.js sets `settings['boundaries/root-path']` is unnecessary —
- * eslint-plugin-boundaries matches on the absolute file path pattern below.
+ * Applies to TypeScript sources only; tooling files (eslint.config.js etc.) are exempt.
  */
 const boundaryElements = [
   { type: 'contracts', pattern: 'packages/contracts' },
@@ -26,7 +24,11 @@ const boundaryElements = [
   { type: 'worker', pattern: 'workers/*', capture: ['name'] },
 ];
 
+const internalPackageSpecifiers = ['@ethanel/*'];
+const appSpecifiers = ['web', 'gateway'];
+
 export const boundariesConfig = {
+  files: ['**/*.ts', '**/*.tsx'],
   plugins: { boundaries },
   settings: {
     'boundaries/elements': boundaryElements,
@@ -36,30 +38,29 @@ export const boundariesConfig = {
   rules: {
     'boundaries/no-unknown-files': 'off',
     'boundaries/no-unknown': 'off',
-    'boundaries/element-types': [
+    'boundaries/dependencies': [
       'error',
       {
         default: 'disallow',
         message:
-          '${file.type} "${file.name}" may not import from ${dependency.type} "${dependency.name}". ' +
+          '{{file.type}} may not import from {{dependency.type}}. ' +
           'Apps, services and workers import packages/* only; packages/contracts imports nothing internal.',
-        rules: [
-          { from: ['app'], allow: ['package', 'contracts'] },
-          { from: ['service'], allow: ['package', 'contracts'] },
-          { from: ['worker'], allow: ['package', 'contracts'] },
-          { from: ['package'], allow: ['package', 'contracts'] },
-          { from: ['contracts'], allow: [] },
-        ],
-      },
-    ],
-    // Workspace packages resolve through node_modules, so also block their bare specifiers.
-    'boundaries/external': [
-      'error',
-      {
-        default: 'allow',
-        rules: [
-          { from: ['contracts'], disallow: ['@ethanel/*'] },
-          { from: ['app', 'service', 'worker', 'package'], disallow: ['web', 'gateway'] },
+        policies: [
+          // Relative / path-alias imports between elements.
+          {
+            from: { element: { types: { anyOf: ['app', 'service', 'worker', 'package'] } } },
+            allow: { to: { element: { types: { anyOf: ['package', 'contracts'] } } } },
+          },
+          // Workspace packages resolve as bare specifiers through node_modules, so also police those.
+          {
+            from: { element: { type: 'contracts' } },
+            disallow: { to: { module: { origin: 'external', source: internalPackageSpecifiers } } },
+          },
+          { disallow: { to: { module: { origin: 'external', source: appSpecifiers } } } },
+          // Every other external module is fine.
+          { allow: { to: { module: { origin: 'external' } } } },
+          // Files inside the same element may import each other freely.
+          { allow: { to: { element: { internal: true } } } },
         ],
       },
     ],

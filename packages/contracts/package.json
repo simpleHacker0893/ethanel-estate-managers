@@ -1,0 +1,38 @@
+{
+  "name": "@ethanel/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "zod schemas: request shape + OpenAPI entry + React Hook Form validation. Single source of truth. Imports nothing internal.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./marketplace-search": {
+      "types": "./dist/marketplace-search.d.ts",
+      "default": "./dist/marketplace-search.js"
+    },
+    "./demo-request": {
+      "types": "./dist/demo-request.d.ts",
+      "default": "./dist/demo-request.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "nuqs": "^2.10.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@ethanel/config": "workspace:*",
+    "eslint": "^9.39.5",
+    "typescript": "^5.9.3"
+  }
+}

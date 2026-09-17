@@ -1,0 +1,153 @@
+/*
+ * Ethanel design tokens. The only place colours, fonts and radii are defined.
+ * Imported by apps/web/app/globals.css and, later, by every storefront and the dashboard.
+ * mpesa / whatsapp greens are for 8px dots and icons only — never fills or text.
+ */
+@import 'tailwindcss';
+
+@theme {
+  --color-navy-950: #0b1026;
+  --color-navy-900: #131a3a;
+  --color-navy-800: #1d2650;
+  --color-navy-700: #283472;
+
+  --color-iris-800: #47388f;
+  --color-iris-700: #5a48b8;
+  --color-iris-600: #6c5bc9;
+  --color-iris-200: #d9d2f5;
+  --color-iris-100: #e9e5fa;
+  --color-iris-50: #f4f2fc;
+
+  --color-pink-700: #b3286a;
+  --color-pink-500: #ea5d9b;
+  --color-pink-400: #f28bb8;
+  --color-pink-200: #f9c6dc;
+  --color-pink-100: #fce4ef;
+  --color-pink-50: #fef3f8;
+
+  --color-mist-50: #f7f6fb;
+  --color-mist-100: #efedf6;
+  --color-mist-200: #e0ddeb;
+  --color-mist-300: #c9c5d8;
+  --color-mist-400: #9f9ab3;
+  --color-mist-500: #6f6a85;
+  --color-mist-700: #3e3a55;
+  --color-ink: #14122b;
+
+  --color-frost: #f3f1fa;
+  --color-lavender-muted: #b7b3d1;
+
+  --color-coral: #e04e5f;
+  --color-amber: #d9a03a;
+  --color-teal: #2e9e74;
+  --color-teal-100: #e3f5ec;
+  --color-teal-200: #bfe7d3;
+
+  --color-mpesa: #3eb54a;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-header: #128c7e;
+  --color-whatsapp-out: #dcf8c6;
+
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-button: 10px;
+  --radius-card: 16px;
+  --radius-door: 24px;
+
+  --shadow-card-hover: 0 8px 30px -12px rgb(11 16 38 / 0.16);
+  --shadow-menu: 0 24px 60px -20px rgb(11 16 38 / 0.45);
+
+  --text-display-xl: clamp(2.5rem, 4.4vw, 4rem);
+  --text-display-xl--line-height: 1.1;
+  --text-display-xl--letter-spacing: -0.015em;
+  --text-display-l: clamp(2rem, 3.3vw, 3rem);
+  --text-display-l--line-height: 1.12;
+  --text-display-l--letter-spacing: -0.01em;
+  --text-heading-m: 2.125rem;
+  --text-heading-m--line-height: 2.5rem;
+  --text-heading-m--letter-spacing: -0.005em;
+  --text-body-l: 1.1875rem;
+  --text-body-l--line-height: 1.875rem;
+  --text-body-m: 1rem;
+  --text-body-m--line-height: 1.5625rem;
+  --text-body-s: 0.875rem;
+  --text-body-s--line-height: 1.3125rem;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1rem;
+  --text-eyebrow--letter-spacing: 0.08em;
+  --text-label-m: 0.9375rem;
+  --text-label-m--line-height: 1.25rem;
+  --text-label-s: 0.8125rem;
+  --text-label-s--line-height: 1rem;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: var(--color-mist-50);
+    color: var(--color-mist-700);
+    font-family: var(--font-sans);
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variation-settings:
+      'opsz' 144,
+      'SOFT' 50;
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-pink-500);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-iris-200);
+    color: var(--color-ink);
+  }
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  line-height: var(--text-eyebrow--line-height);
+  letter-spacing: var(--text-eyebrow--letter-spacing);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@utility kes {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility card {
+  background-color: white;
+  border: 1px solid var(--color-mist-200);
+  border-radius: var(--radius-card);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+@utility card-hover {
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+@utility dot-8 {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
