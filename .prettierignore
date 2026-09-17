@@ -5,3 +5,5 @@ dist
 pnpm-lock.yaml
 charts/**/templates
 CHANGELOG.md
+packages/db/prisma/generated
+.claude/skills/

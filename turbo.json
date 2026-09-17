@@ -8,7 +8,16 @@
       "dependsOn": ["^build", "@ethanel/contracts#build"],
       "inputs": ["$TURBO_DEFAULT$", ".env.example"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_WHATSAPP_NUMBER", "DEMO_WEBHOOK_URL"]
+      "env": [
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_WHATSAPP_NUMBER",
+        "DEMO_WEBHOOK_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "NEXT_PUBLIC_CLERK_SIGN_IN_URL",
+        "NEXT_PUBLIC_CLERK_SIGN_UP_URL",
+        "NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL",
+        "NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"
+      ]
     },
     "@ethanel/contracts#build": {
       "outputs": ["dist/**"]
@@ -22,12 +31,16 @@
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": ["playwright-report/**", "test-results/**"]
+      "outputs": ["playwright-report/**", "test-results/**"],
+      "env": ["DATABASE_URL", "CLERK_SECRET_KEY", "CLERK_JWT_KEY", "PLAYWRIGHT_CHROMIUM_EXECUTABLE"]
     },
     "dev": {
       "dependsOn": ["@ethanel/contracts#build"],
       "cache": false,
       "persistent": true
+    },
+    "@ethanel/db#build": {
+      "outputs": ["prisma/generated/**"]
     }
   }
 }
