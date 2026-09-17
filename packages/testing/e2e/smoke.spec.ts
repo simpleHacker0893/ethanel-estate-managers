@@ -82,7 +82,7 @@ test.describe('landing', () => {
     await form.getByRole('radio', { name: 'For sale' }).click();
     await form.getByRole('button', { name: 'Search' }).click();
     await page.waitForURL(/\/marketplace\?.*intent=sale/);
-    await expect(page.locator('h1')).toHaveText('Homes for sale');
+    await expect(page.getByRole('heading', { level: 1, name: 'Homes for sale' })).toBeVisible();
   });
 
   test('demo form rejects an invalid email inline and accepts a valid one', async ({ page }) => {
@@ -110,10 +110,14 @@ test.describe('marketplace', () => {
   test('filters update the URL and the count without a reload', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     await page.goto('/marketplace');
-    await expect(page.locator('h1')).toHaveText('Homes and units to let');
-    await page.getByRole('radio', { name: 'Land' }).click();
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Homes and units to let' }),
+    ).toBeVisible();
+    await page.getByRole('radio', { name: 'Land', exact: true }).click();
     await page.waitForURL(/intent=land/);
-    await expect(page.locator('h1')).toHaveText('Plots and land for sale');
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Plots and land for sale' }),
+    ).toBeVisible();
     await expect(page.getByText(/results · sample data/)).toBeVisible();
     expect(errors).toEqual([]);
   });

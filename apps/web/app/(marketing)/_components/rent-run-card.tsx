@@ -18,7 +18,7 @@ export function RentRunCard() {
           <p className="text-label-s font-semibold text-mist-500">{c.title}</p>
           <p className="mt-0.5 text-label-m font-semibold">{c.property}</p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-2.5 py-1 text-label-s font-semibold text-teal">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-2.5 py-1 text-label-s font-semibold text-teal-700">
           <span className="dot-8 bg-teal" aria-hidden="true" />
           {c.status}
         </span>

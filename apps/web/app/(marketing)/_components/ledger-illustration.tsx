@@ -65,7 +65,7 @@ export function LedgerIllustration() {
           <CheckIcon className="size-4 text-teal" aria-hidden="true" />
           {l.footer}
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-2.5 py-1 text-label-s font-semibold text-teal">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-2.5 py-1 text-label-s font-semibold text-teal-700">
           {l.balanced}
         </span>
       </div>

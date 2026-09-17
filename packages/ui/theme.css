@@ -40,12 +40,13 @@
   --color-coral: #e04e5f;
   --color-amber: #d9a03a;
   --color-teal: #2e9e74;
+  --color-teal-700: #1b6b4e; /* text on teal-100 and white; teal itself is for dots and bars */
   --color-teal-100: #e3f5ec;
   --color-teal-200: #bfe7d3;
 
   --color-mpesa: #3eb54a;
   --color-whatsapp: #25d366;
-  --color-whatsapp-header: #128c7e;
+  --color-whatsapp-header: #075e54; /* classic WhatsApp header teal; white text passes AA */
   --color-whatsapp-out: #dcf8c6;
 
   --font-display: var(--font-fraunces), Georgia, serif;

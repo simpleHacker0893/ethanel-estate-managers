@@ -18,7 +18,7 @@ export function MegaMenu({ group }: { group: NavGroup }) {
   const colCount = group.columns.length + (hasPromo ? 1 : 0);
 
   return (
-    <li className="mega-item relative" data-menu>
+    <li className="mega-item" data-menu>
       <button
         type="button"
         className="mega-trigger inline-flex h-11 items-center gap-1.5 rounded-[8px] px-1 font-sans text-label-m font-semibold text-frost transition-colors hover:text-pink-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-500 aria-expanded:text-pink-400"
@@ -39,8 +39,8 @@ export function MegaMenu({ group }: { group: NavGroup }) {
         role="menu"
         aria-label={group.label}
         data-menu-panel
-        className="mega-panel absolute top-full left-1/2 z-40 mt-2 -translate-x-1/2 rounded-card border-t border-mist-200 bg-white p-6 text-ink shadow-menu"
-        style={{ width: `min(${group.width}px, calc(100vw - 3rem))` }}
+        className="mega-panel absolute top-full left-1/2 z-40 mt-1 rounded-card border-t border-mist-200 bg-white p-6 text-ink shadow-menu"
+        style={{ width: `min(${group.width}px, 100%)` }}
       >
         <div
           className={cn('grid gap-5', hasPromo ? 'grid-cols-[1fr_1fr_220px]' : 'grid-cols-3')}

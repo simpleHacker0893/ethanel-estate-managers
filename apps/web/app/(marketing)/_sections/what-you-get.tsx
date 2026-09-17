@@ -19,7 +19,7 @@ function Receipt() {
         ))}
         <div className="flex justify-between gap-4 py-2">
           <dt className="text-mist-500">{r.postedLabel}</dt>
-          <dd className="inline-flex items-center gap-1.5 font-semibold text-teal">
+          <dd className="inline-flex items-center gap-1.5 font-semibold text-teal-700">
             <span className="dot-8 bg-teal" aria-hidden="true" />
             {r.postedValue}
           </dd>

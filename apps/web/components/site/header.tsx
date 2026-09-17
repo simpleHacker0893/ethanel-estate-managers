@@ -16,7 +16,7 @@ import { MobileNav } from './mobile-nav';
 export function Header() {
   return (
     <header className="site-header sticky top-0 z-50 border-b border-navy-900 bg-navy-950 text-frost">
-      <div className="container-x flex h-[72px] items-center justify-between gap-6">
+      <div className="relative container-x flex h-[72px] items-center justify-between gap-6">
         <Logo />
 
         <nav aria-label="Main" className="hidden lg:block">

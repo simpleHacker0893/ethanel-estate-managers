@@ -64,8 +64,9 @@
     }
   }
 
-  /* Mega-menu: open on hover and focus-within (CSS), or data-open (click); data-closed (Escape)
-     wins until the pointer leaves or focus moves out. transform/opacity only. */
+  /* Mega-menu: panels are positioned against the header container (never the trigger) so a
+     1000px panel is always inside the viewport. Open on hover and focus-within (CSS), or
+     data-open (click); data-closed (Escape) wins until the pointer leaves or focus moves out. */
   .mega-panel {
     visibility: hidden;
     opacity: 0;

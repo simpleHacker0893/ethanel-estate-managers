@@ -17,7 +17,18 @@ export default defineConfig({
     baseURL,
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        // A sandbox with a preinstalled Chromium sets this; CI installs the matching build instead.
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } }
+          : {}),
+      },
+    },
+  ],
   webServer: {
     command: `pnpm --filter web exec next start --port ${PORT}`,
     url: `${baseURL}/api/health`,

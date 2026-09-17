@@ -18,13 +18,13 @@ export function WhatsAppBubble() {
         <ChevronLeftIcon className="size-5 shrink-0" aria-hidden="true" />
         <span
           aria-hidden="true"
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-label-s font-bold"
+          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-label-s font-bold text-whatsapp-header"
         >
           {w.avatar}
         </span>
         <span className="min-w-0 flex-1 leading-tight">
           <span className="block truncate text-label-m font-semibold">{w.name}</span>
-          <span className="block text-[12px] text-white/80">{w.subtitle}</span>
+          <span className="block text-[12px] text-white/90">{w.subtitle}</span>
         </span>
         <MoreVerticalIcon className="size-5 shrink-0" aria-hidden="true" />
       </div>
@@ -43,7 +43,7 @@ export function WhatsAppBubble() {
             {w.incoming.sender}
           </span>
           <p>{w.incoming.text}</p>
-          <span className="mt-1 block text-right text-[11px] text-mist-500">{w.incoming.time}</span>
+          <span className="mt-1 block text-right text-[11px] text-mist-700">{w.incoming.time}</span>
         </div>
 
         <div className="relative ml-auto min-w-24 rounded-[10px] rounded-tr-none bg-whatsapp-out px-3 py-2 text-[14px] leading-5 shadow-xs">
@@ -52,9 +52,9 @@ export function WhatsAppBubble() {
             className="absolute top-0 -right-2 size-0 border-t-[10px] border-l-[8px] border-t-whatsapp-out border-l-transparent"
           />
           <p className="font-semibold">{w.outgoing.text}</p>
-          <span className="mt-1 flex items-center justify-end gap-1 text-[11px] text-mist-500">
+          <span className="mt-1 flex items-center justify-end gap-1 text-[11px] text-mist-700">
             {w.outgoing.time}
-            <CheckCheckIcon className="size-3.5 text-[#53BDEB]" aria-label="Read" />
+            <CheckCheckIcon className="size-3.5 text-[#34B7F1]" aria-label="Read" />
           </span>
         </div>
       </div>

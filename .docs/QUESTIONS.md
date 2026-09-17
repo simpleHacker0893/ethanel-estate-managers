@@ -46,6 +46,9 @@ operator must confirm or correct. Nothing here appears in product copy as fact.
 - **Q-19** `// ASSUMPTION:` Sample listing prices in `content/listings.ts` are whole-shilling
   `number`s used only to filter and display marketing samples. Ledger money stays `bigint` minor
   units; listing-svc will expose `priceMinor` as a string of minor units in its contract.
+- **Q-21** `// ASSUMPTION:` The WhatsApp mock header uses the classic WhatsApp teal `#075E54`
+  instead of the brief's `#128C7E`, because white 15px text on `#128C7E` is 4.13:1 and fails axe
+  (serious). Chip text uses a new `teal-700` for the same reason; `teal` stays for dots and bars.
 - **Q-20** `// ASSUMPTION:` The chassis and web use ESLint 9 (the last line `eslint-plugin-jsx-a11y`
   supports). Renovate will move the repo to ESLint 10 when that plugin publishes support.
 

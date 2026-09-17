@@ -32,7 +32,7 @@ const chipTone: Record<ListingIntent, string> = {
   'short-stay': 'bg-iris-100 text-iris-700 border-iris-200',
   sale: 'bg-pink-100 text-pink-700 border-pink-200',
   land: 'bg-pink-100 text-pink-700 border-pink-200',
-  lease: 'bg-teal-100 text-teal border-teal-200',
+  lease: 'bg-teal-100 text-teal-700 border-teal-200',
 };
 
 const gradient = {
@@ -87,14 +87,19 @@ export function ListingCard(p: ListingCardProps) {
         </p>
         <p className="mt-1 text-body-s text-mist-500">Managed by {p.agency}</p>
 
-        <div className="mt-5 flex flex-col gap-3 border-t border-mist-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-mist-100 pt-4">
           <Link
             href={`/marketplace?listing=${p.id}`}
             className="text-label-m font-semibold text-iris-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-pink-500"
           >
             {p.viewingLabel}
           </Link>
-          <Button asChild={Boolean(whatsapp.href)} variant="secondary" size="compact">
+          <Button
+            asChild={Boolean(whatsapp.href)}
+            variant="secondary"
+            size="compact"
+            className="max-w-full min-w-0 px-3.5 text-[14px] [&_svg]:size-[18px]"
+          >
             {whatsapp.href ? (
               <a href={whatsapp.href}>
                 <MessageCircleIcon className="text-whatsapp" aria-hidden="true" />
