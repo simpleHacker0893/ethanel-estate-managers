@@ -24,8 +24,10 @@ env:
   NEXT_PUBLIC_CLERK_SIGN_UP_URL: /sign-up
   NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: /after-sign-in
   NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: /after-sign-in
-  DATABASE_URL: postgresql://ethanel:ethanel@127.0.0.1:5432/ethanel
-  DATABASE_URL_UNPOOLED: postgresql://ethanel:ethanel@127.0.0.1:5432/ethanel
+  # The e2e database role. Not the service's bootstrap superuser (which bypasses RLS): the
+  # "Migrate and seed" step creates this non-superuser role and makes it the database owner.
+  DATABASE_URL: postgresql://ethanel_app:ethanel@127.0.0.1:5432/ethanel
+  DATABASE_URL_UNPOOLED: postgresql://ethanel_app:ethanel@127.0.0.1:5432/ethanel
   # Job-wide so the build hash is identical in the build and test steps (turbo re-ran web#build
   # under the test step when only that step had GIT_SHA, racing Playwright's next start).
   GIT_SHA: ${{ github.sha }}
@@ -55,10 +57,14 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run lint typecheck
       - name: Migrate and seed the e2e database
-        # The service's bootstrap role is a superuser, which bypasses row-level security; drop
-        # that first so the tenancy tests exercise the policies exactly as the app role does.
+        # The service's bootstrap role is a superuser and bypasses row-level security, so the
+        # app connects as a plain role that owns the database: FORCE RLS then applies to it and
+        # the tenancy tests exercise the policies exactly as the deployed app role does.
         run: |
-          PGPASSWORD=ethanel psql -h 127.0.0.1 -U ethanel -d ethanel -c 'ALTER ROLE ethanel NOSUPERUSER NOBYPASSRLS CREATEDB'
+          PGPASSWORD=ethanel psql -h 127.0.0.1 -U ethanel -d ethanel -v ON_ERROR_STOP=1 \
+            -c "CREATE ROLE ethanel_app LOGIN PASSWORD 'ethanel' NOSUPERUSER NOBYPASSRLS" \
+            -c "ALTER DATABASE ethanel OWNER TO ethanel_app" \
+            -c "ALTER SCHEMA public OWNER TO ethanel_app"
           pnpm --filter @ethanel/db migrate:deploy
           pnpm --filter @ethanel/db seed
       - run: pnpm turbo run build
