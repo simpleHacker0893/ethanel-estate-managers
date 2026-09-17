@@ -108,7 +108,17 @@ export function ListingCard(p: ListingCardProps) {
           <MapPinIcon className="size-4" aria-hidden="true" />
           {p.location}
         </a>
-        <p className="mt-1 text-body-s text-mist-500">Managed by {p.agency}</p>
+        <p className="mt-1 text-body-s text-mist-500">
+          Managed by {p.agency}
+          {p.sample ? (
+            <>
+              {' · '}
+              <span className="rounded-full bg-mist-100 px-2 py-0.5 text-label-s font-semibold text-mist-700">
+                Sample listing
+              </span>
+            </>
+          ) : null}
+        </p>
         <p className="mt-1 inline-flex items-center gap-1.5 text-body-s text-mist-500">
           <CalendarIcon className="size-4" aria-hidden="true" />
           {p.listedLabel}
