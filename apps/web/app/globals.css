@@ -34,3 +34,62 @@
     }
   }
 }
+
+/*
+ * Header: navy-950 solid at the top, 92% + backdrop-blur once the page has scrolled 24px.
+ * Scroll-driven animation where supported; the fallback is the scrolled state everywhere.
+ */
+@layer components {
+  .site-header {
+    background-color: rgb(11 16 38 / 0.92);
+    backdrop-filter: blur(12px);
+  }
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .site-header {
+        animation: header-scrolled linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 24px;
+      }
+    }
+  }
+  @keyframes header-scrolled {
+    from {
+      background-color: rgb(11 16 38 / 1);
+      backdrop-filter: blur(0);
+    }
+    to {
+      background-color: rgb(11 16 38 / 0.92);
+      backdrop-filter: blur(12px);
+    }
+  }
+
+  /* Mega-menu: open on hover and focus-within (CSS), or data-open (click); data-closed (Escape)
+     wins until the pointer leaves or focus moves out. transform/opacity only. */
+  .mega-panel {
+    visibility: hidden;
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease,
+      visibility 0s linear 150ms;
+  }
+  .mega-item:not([data-closed]):hover > .mega-panel,
+  .mega-item:not([data-closed]):focus-within > .mega-panel,
+  .mega-item[data-open] > .mega-panel {
+    visibility: visible;
+    opacity: 1;
+    transform: translate(-50%, 0);
+    transition-delay: 0s;
+  }
+  .mega-item:not([data-closed]):hover > .mega-trigger > svg,
+  .mega-item[data-open] > .mega-trigger > svg {
+    transform: rotate(180deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mega-panel {
+      transition: none;
+    }
+  }
+}
