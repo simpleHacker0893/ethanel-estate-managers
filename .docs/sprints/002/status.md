@@ -1,4 +1,8 @@
-# Sprint 002 — status (first slice, 2026-09-17)
+# Sprint 002 — status (auth and data slice, 2026-09-17)
+
+The sprint pack (`requirements.md`, `blueprint.md`, `acceptance.md`, `handoff.md`) describes the
+marketing, marketplace and assistant scope delivered on `main`; this file records the Clerk,
+Neon and Prisma slice from ADR-001 that merged on top of it.
 
 ## Delivered
 

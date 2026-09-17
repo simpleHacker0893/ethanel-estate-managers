@@ -7,7 +7,7 @@ import type {
   MarketplaceBudget,
   MarketplaceIntent,
   MarketplaceType,
-  MarketplaceWhere,
+  MarketplaceCounty,
 } from '@ethanel/contracts/marketplace-search';
 import { serializeMarketplaceSearch } from '@ethanel/contracts/marketplace-search';
 import { Button } from '@ethanel/ui/components/button';
@@ -22,11 +22,11 @@ import { cn } from '@ethanel/ui/lib/cn';
 
 import {
   budgetBandsByIntent,
+  countyOptions,
   intentSegments,
   landingIntentIds,
   searchBarCopy,
   typeOptions,
-  whereOptions,
 } from '@/content/marketplace';
 
 /**
@@ -37,7 +37,8 @@ export function MarketplaceSearchBar() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [intent, setIntent] = useState<MarketplaceIntent>('rent');
-  const [where, setWhere] = useState<MarketplaceWhere>('anywhere');
+  const [county, setCounty] = useState<MarketplaceCounty>('anywhere');
+  const [area, setArea] = useState('');
   const [type, setType] = useState<MarketplaceType>('any');
   const [budget, setBudget] = useState<MarketplaceBudget>('any');
 
@@ -51,7 +52,13 @@ export function MarketplaceSearchBar() {
   }
 
   function submit() {
-    const href = serializeMarketplaceSearch('/marketplace', { intent, where, type, budget });
+    const href = serializeMarketplaceSearch('/marketplace', {
+      intent,
+      county,
+      area: area.trim(),
+      type,
+      budget,
+    });
     startTransition(() => {
       router.push(href);
     });
@@ -102,33 +109,52 @@ export function MarketplaceSearchBar() {
         </p>
       </fieldset>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
+      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_auto]">
         <div>
           <label
-            htmlFor="search-where"
+            htmlFor="search-county"
             className="mb-1.5 block text-label-s font-semibold text-mist-700"
           >
-            {searchBarCopy.where}
+            {searchBarCopy.county}
           </label>
           <Select
-            value={where}
+            value={county}
             onValueChange={(v) => {
-              setWhere(v as MarketplaceWhere);
+              setCounty(v as MarketplaceCounty);
             }}
           >
-            <SelectTrigger id="search-where">
+            <SelectTrigger id="search-county">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {whereOptions.map((o) => (
-                <SelectItem key={o.value} value={o.value} disabled={o.coming === true}>
+              {countyOptions.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
                   {o.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-
+        <div>
+          <label
+            htmlFor="search-area"
+            className="mb-1.5 block text-label-s font-semibold text-mist-700"
+          >
+            {searchBarCopy.area}
+          </label>
+          <input
+            id="search-area"
+            name="area"
+            type="search"
+            value={area}
+            onChange={(e) => {
+              setArea(e.target.value);
+            }}
+            maxLength={60}
+            placeholder={searchBarCopy.areaPlaceholder}
+            className="h-[50px] w-full rounded-button border border-mist-200 bg-white px-4 font-sans text-body-m text-ink placeholder:text-mist-500 hover:border-mist-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-500"
+          />
+        </div>
         <div>
           <label
             htmlFor="search-type"
@@ -182,7 +208,7 @@ export function MarketplaceSearchBar() {
         </div>
 
         <div className="flex items-end">
-          <Button type="submit" variant="accent" className="w-full md:w-auto" disabled={pending}>
+          <Button type="submit" variant="accent" className="w-full xl:w-auto" disabled={pending}>
             {searchBarCopy.search}
           </Button>
         </div>

@@ -10,7 +10,7 @@ export const demoRequestSchema = z.object({
     .pipe(z.email('Enter a valid email address'))
     .transform((value) => value.toLowerCase()),
   /** Where the request came from; lets billing-svc attribute leads. */
-  source: z.enum(['landing', 'pricing', 'marketplace']).default('landing'),
+  source: z.enum(['landing', 'pricing', 'marketplace', 'demo', 'company']).default('landing'),
 });
 
 export type DemoRequestInput = z.input<typeof demoRequestSchema>;

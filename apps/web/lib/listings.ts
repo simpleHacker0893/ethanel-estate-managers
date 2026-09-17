@@ -10,10 +10,13 @@ import { sampleListings, type SampleListing } from '@/content/listings';
 export function searchListings(search: MarketplaceSearch): readonly SampleListing[] {
   const band = budgetBandsByIntent[search.intent].find((b) => b.value === search.budget);
   const typeFamily = search.type === 'any' ? null : search.type.split('-')[0];
+  const area = search.area.trim().toLowerCase();
 
   const matches = sampleListings.filter((l) => {
     if (l.intent !== search.intent) return false;
-    if (search.where !== 'anywhere' && l.where !== search.where) return false;
+    if (search.county !== 'anywhere' && l.county !== search.county) return false;
+    if (area && !`${l.area} ${l.location}`.toLowerCase().includes(area)) return false;
+    if (search.status !== 'any' && l.status !== search.status) return false;
     if (search.type !== 'any' && l.type !== search.type) {
       // A family match (unit/home/plot) is close enough for the "3+ bed" style buckets.
       if (!(typeFamily && l.type.startsWith(`${typeFamily}-`) && search.type.endsWith('-plus'))) {
@@ -40,7 +43,10 @@ export function searchListings(search: MarketplaceSearch): readonly SampleListin
     case 'newest':
     case 'nearest':
     default:
-      sorted.sort((a, b) => a.listedDaysAgo - b.listedDaysAgo);
+      // ISO dates compare as strings; newest first. "Nearest" needs a location (Q-13).
+      sorted.sort((a, b) =>
+        a.publishedAt < b.publishedAt ? 1 : a.publishedAt > b.publishedAt ? -1 : 0,
+      );
   }
   return sorted;
 }
@@ -49,4 +55,16 @@ const kes = new Intl.NumberFormat('en-KE', { maximumFractionDigits: 0 });
 
 export function formatKes(amount: number): string {
   return `KES ${kes.format(amount)}`;
+}
+
+const listed = new Intl.DateTimeFormat('en-KE', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'Africa/Nairobi',
+});
+
+/** "3 Sep 2026" from an ISO date. Deterministic: no clock involved. */
+export function formatListedDate(isoDate: string): string {
+  return listed.format(new Date(`${isoDate}T12:00:00Z`));
 }

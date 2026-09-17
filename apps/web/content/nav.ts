@@ -1,6 +1,7 @@
 import type { Route } from 'next';
 
 import type { NavIconName } from '@/components/site/nav-icon';
+import type { ImageSlotId } from '@/content/images';
 
 /**
  * Mega-menu information architecture. Every label, description and href for the header, the
@@ -12,6 +13,8 @@ export interface NavItem {
   readonly description?: string;
   readonly href: Route;
   readonly icon: NavIconName;
+  /** Thumbnail scene shown instead of the icon badge in the desktop menu. */
+  readonly image?: ImageSlotId;
   readonly badge?: 'coming';
 }
 
@@ -27,6 +30,7 @@ export interface NavPromo {
   readonly cta: string;
   readonly href: Route;
   readonly tone: 'pink' | 'iris';
+  readonly image?: ImageSlotId;
 }
 
 export interface NavGroup {
@@ -52,24 +56,28 @@ export const navGroups: readonly NavGroup[] = [
             description: 'Units and homes to let by the month, plus furnished short stays',
             href: '/marketplace?intent=rent',
             icon: 'home',
+            image: 'nav-rentals',
           },
           {
             label: 'For sale',
             description: 'Houses, maisonettes, townhouses and apartments to buy',
             href: '/marketplace?intent=sale',
             icon: 'building',
+            image: 'nav-for-sale',
           },
           {
             label: 'Land',
             description: 'Plots by size and county, from the companies that sell them',
             href: '/marketplace?intent=land',
             icon: 'map',
+            image: 'nav-land',
           },
           {
             label: 'Lease land',
             description: 'Farmland and commercial plots leased by the year',
             href: '/marketplace?intent=lease',
             icon: 'sprout',
+            image: 'nav-lease-land',
           },
         ],
       },
@@ -80,19 +88,19 @@ export const navGroups: readonly NavGroup[] = [
             label: 'List your property',
             description:
               'For agencies and landlords — vacant units list themselves from your portfolio',
-            href: '/demo',
+            href: '/sign-in?next=%2Forg',
             icon: 'plus',
           },
           {
             label: 'Saved searches & WhatsApp alerts',
             description: 'Hear the moment a match lists — on WhatsApp, not email',
-            href: '/marketplace#alerts',
+            href: '/sign-in?next=%2Fmarketplace%23alerts',
             icon: 'bell',
           },
           {
             label: 'Book a viewing',
             description: 'How viewings work and what to bring',
-            href: '/marketplace',
+            href: '/sign-in?next=%2Fmarketplace',
             icon: 'calendar',
           },
         ],
@@ -104,6 +112,7 @@ export const navGroups: readonly NavGroup[] = [
       cta: 'Browse all listings',
       href: '/marketplace',
       tone: 'pink',
+      image: 'nav-marketplace-promo',
     },
   },
   {
@@ -188,32 +197,37 @@ export const navGroups: readonly NavGroup[] = [
           {
             label: 'Letting & property management firms',
             description: '50 to 500 units without spreadsheet chaos',
-            href: '/solutions',
+            href: '/solutions/letting-firms',
             icon: 'building',
+            image: 'nav-letting-firms',
           },
           {
             label: 'Land-selling companies',
             description: 'Market plots, book site visits, track deposits',
-            href: '/solutions',
+            href: '/solutions/land-selling-companies',
             icon: 'map',
+            image: 'nav-land-selling',
           },
           {
             label: 'Landlords',
             description: 'A statement you can read and money that arrives on time',
-            href: '/solutions',
+            href: '/solutions/landlords',
             icon: 'key',
+            image: 'nav-landlords',
           },
           {
             label: 'Caretakers & field staff',
             description: 'Work orders and rent chasing on a phone, no laptop',
-            href: '/solutions',
+            href: '/solutions/caretakers',
             icon: 'hard-hat',
+            image: 'nav-caretakers',
           },
           {
             label: 'Residents',
             description: 'Pay rent, raise repairs and find your next home',
-            href: '/solutions',
+            href: '/solutions/residents',
             icon: 'user',
+            image: 'nav-residents',
           },
         ],
       },
@@ -225,6 +239,7 @@ export const navGroups: readonly NavGroup[] = [
       cta: 'Become a design partner',
       href: '/design-partners',
       tone: 'iris',
+      image: 'nav-design-partners-promo',
     },
   },
   {
@@ -289,5 +304,5 @@ export const topLevelLinks: readonly { label: string; href: Route }[] = [
 export const headerActions = {
   signIn: { label: 'Sign in', href: '/sign-in' as Route },
   signUp: { label: 'Create account', href: '/sign-up' as Route },
-  demo: { label: 'Book a demo', href: '/#demo' as Route },
+  demo: { label: 'Book a demo', href: '/demo' as Route },
 } as const;

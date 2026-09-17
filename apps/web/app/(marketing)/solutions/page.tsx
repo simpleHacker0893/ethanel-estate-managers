@@ -1,18 +1,15 @@
 import type { Metadata } from 'next';
 
-import { PlaceholderPage } from '@/app/(marketing)/_components/placeholder-page';
+import { RolePanel } from '@/app/(marketing)/solutions/_components/role-panel';
+import { roles } from '@/content/solutions';
 
 export const metadata: Metadata = {
-  title: 'Built for letting firms, land-selling companies, landlords, caretakers and residents.',
+  title: 'Solutions',
+  description: roles['letting-firms'].metaDescription,
+  alternates: { canonical: '/solutions/letting-firms' },
 };
 
-/** Server. Placeholder; the designed page ships in a later sprint. */
-export default function Page() {
-  return (
-    <PlaceholderPage
-      eyebrow="Solutions"
-      title="Built for letting firms, land-selling companies, landlords, caretakers and residents."
-      body="Pick who you are and see what changes on the first of next month."
-    />
-  );
+/** Server. /solutions shows the first role; each role has its own URL. */
+export default function SolutionsPage() {
+  return <RolePanel roleId="letting-firms" />;
 }

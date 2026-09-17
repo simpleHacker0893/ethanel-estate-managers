@@ -5,6 +5,8 @@ import { cn } from '@ethanel/ui/lib/cn';
 
 import type { NavGroup } from '@/content/nav';
 
+import { SceneImageSlot } from '@/components/media/scene-image-slot';
+
 import { NavIconBadge } from './nav-icon';
 
 /**
@@ -63,7 +65,11 @@ export function MegaMenu({ group }: { group: NavGroup }) {
                   role="menuitem"
                   className="flex items-start gap-3.5 rounded-[12px] px-3 py-2.5 text-ink transition-colors hover:bg-mist-50 focus-visible:bg-mist-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pink-500"
                 >
-                  <NavIconBadge name={item.icon} />
+                  {item.image ? (
+                    <SceneImageSlot slot={item.image} variant="thumb" attribution="none" />
+                  ) : (
+                    <NavIconBadge name={item.icon} />
+                  )}
                   <span className="flex flex-col gap-0.5">
                     <span className="inline-flex items-center gap-1.5 text-label-m font-semibold">
                       {item.label}
@@ -93,6 +99,9 @@ export function MegaMenu({ group }: { group: NavGroup }) {
                   : 'border-iris-200 bg-iris-50 hover:bg-white',
               )}
             >
+              {group.promo.image ? (
+                <SceneImageSlot slot={group.promo.image} variant="promo" attribution="none" />
+              ) : null}
               <span className="flex flex-col gap-1.5">
                 <span
                   className={cn(

@@ -10,7 +10,8 @@
     "./components/button": "./components/button.tsx",
     "./components/sheet": "./components/sheet.tsx",
     "./components/select": "./components/select.tsx",
-    "./components/accordion": "./components/accordion.tsx"
+    "./components/accordion": "./components/accordion.tsx",
+    "./components/tabs": "./components/tabs.tsx"
   },
   "scripts": {
     "lint": "eslint .",

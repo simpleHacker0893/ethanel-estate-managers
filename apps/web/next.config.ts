@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Listing photos are served from the listing-svc object store (Sprint 003+).
       { protocol: 'https', hostname: 'images.ethanel.co.ke' },
+      // Scene photos resolved through the Unsplash API (hotlinked per Unsplash guidelines).
+      { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
   experimental: {

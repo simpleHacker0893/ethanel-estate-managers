@@ -5,7 +5,7 @@ import { Button } from '@ethanel/ui/components/button';
 
 import { marketplaceCopy } from '@/content/listings';
 
-/** Server. Saved-search alerts band; the flow itself arrives with listing-svc. */
+/** Server. Saved-search alerts band; the flow itself needs an account, so the CTA goes to sign-in. */
 export function AlertsBand() {
   return (
     <section
@@ -28,7 +28,7 @@ export function AlertsBand() {
           </div>
         </div>
         <Button asChild variant="accent" className="w-full md:w-auto">
-          <Link href="/#demo">{marketplaceCopy.alertsCta}</Link>
+          <Link href="/sign-in?next=%2Fmarketplace%23alerts">{marketplaceCopy.alertsCta}</Link>
         </Button>
       </div>
     </section>

@@ -39,6 +39,8 @@
 
   --color-coral: #e04e5f;
   --color-amber: #d9a03a;
+  --color-amber-700: #7a5200; /* text on amber-100 */
+  --color-amber-100: #fbf1dc;
   --color-teal: #2e9e74;
   --color-teal-700: #1b6b4e; /* text on teal-100 and white; teal itself is for dots and bars */
   --color-teal-100: #e3f5ec;

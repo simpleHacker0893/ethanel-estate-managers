@@ -5,12 +5,13 @@ import { useQueryStates } from 'nuqs';
 import { useState } from 'react';
 
 import type {
+  ListingStatusFilter,
   MarketplaceAmenity,
+  MarketplaceCounty,
   MarketplaceBudget,
   MarketplaceSearch,
   MarketplaceSort,
   MarketplaceType,
-  MarketplaceWhere,
 } from '@ethanel/contracts/marketplace-search';
 import { marketplaceSearchParsers } from '@ethanel/contracts/marketplace-search';
 import { Button } from '@ethanel/ui/components/button';
@@ -26,11 +27,12 @@ import { cn } from '@ethanel/ui/lib/cn';
 import { marketplaceCopy } from '@/content/listings';
 import {
   budgetBandsByIntent,
+  countyOptions,
   intentSegments,
   searchBarCopy,
   sortOptions,
+  statusFilterOptions,
   typeOptions,
-  whereOptions,
 } from '@/content/marketplace';
 
 const { listing: _listing, ...filterParsers } = marketplaceSearchParsers;
@@ -45,7 +47,9 @@ export function MarketplaceFilters({ initial }: { initial: MarketplaceSearch }) 
   const segment = intentSegments.find((s) => s.id === q.intent) ?? intentSegments[0];
   const bands = budgetBandsByIntent[q.intent];
   const isDefault =
-    q.where === 'anywhere' &&
+    q.county === 'anywhere' &&
+    q.area === '' &&
+    q.status === 'any' &&
     q.type === 'any' &&
     q.budget === 'any' &&
     q.beds === null &&
@@ -81,29 +85,55 @@ export function MarketplaceFilters({ initial }: { initial: MarketplaceSearch }) 
       </div>
       <p className="mt-2 text-body-s text-mist-500">{segment?.hint}</p>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto]">
         <div>
           <label
-            htmlFor="mp-where"
+            htmlFor="mp-county"
             className="mb-1.5 block text-label-s font-semibold text-mist-700"
           >
-            {searchBarCopy.where}
+            {searchBarCopy.county}
           </label>
           <Select
-            value={q.where}
-            onValueChange={(v) => void setQ({ where: v as MarketplaceWhere })}
+            value={q.county}
+            onValueChange={(v) => void setQ({ county: v as MarketplaceCounty })}
           >
-            <SelectTrigger id="mp-where">
+            <SelectTrigger id="mp-county">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {whereOptions.map((o) => (
-                <SelectItem key={o.value} value={o.value} disabled={o.coming === true}>
+              {countyOptions.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
                   {o.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+        </div>
+        <div>
+          <label
+            htmlFor="mp-area"
+            className="mb-1.5 block text-label-s font-semibold text-mist-700"
+          >
+            {searchBarCopy.area}
+          </label>
+          <input
+            id="mp-area"
+            type="search"
+            defaultValue={q.area}
+            maxLength={60}
+            placeholder={searchBarCopy.areaPlaceholder}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                void setQ({ area: e.currentTarget.value.trim() });
+              }
+            }}
+            onBlur={(e) => {
+              if (e.currentTarget.value.trim() !== q.area)
+                void setQ({ area: e.currentTarget.value.trim() });
+            }}
+            className="h-[50px] w-full rounded-button border border-mist-200 bg-white px-4 font-sans text-body-m text-ink placeholder:text-mist-500 hover:border-mist-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-500"
+          />
         </div>
         <div>
           <label
@@ -188,8 +218,31 @@ export function MarketplaceFilters({ initial }: { initial: MarketplaceSearch }) 
       <div
         id="mp-more-filters"
         hidden={!open}
-        className="mt-4 grid gap-6 border-t border-mist-100 pt-4 md:grid-cols-[auto_1fr_auto]"
+        className="mt-4 grid gap-6 border-t border-mist-100 pt-4 md:grid-cols-[auto_auto_1fr_auto]"
       >
+        <div>
+          <label
+            htmlFor="mp-status"
+            className="mb-2 block text-label-s font-semibold text-mist-700"
+          >
+            {marketplaceCopy.status}
+          </label>
+          <Select
+            value={q.status}
+            onValueChange={(v) => void setQ({ status: v as ListingStatusFilter })}
+          >
+            <SelectTrigger id="mp-status" className="w-full md:w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {statusFilterOptions.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <fieldset>
           <legend className="mb-2 text-label-s font-semibold text-mist-700">
             {marketplaceCopy.bedrooms}
@@ -255,7 +308,9 @@ export function MarketplaceFilters({ initial }: { initial: MarketplaceSearch }) 
             disabled={isDefault}
             onClick={() =>
               void setQ({
-                where: 'anywhere',
+                county: 'anywhere',
+                area: '',
+                status: 'any',
                 type: 'any',
                 budget: 'any',
                 beds: null,

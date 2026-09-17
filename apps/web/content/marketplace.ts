@@ -1,9 +1,11 @@
 import type {
+  KenyaCounty,
+  ListingStatusFilter,
   MarketplaceBudget,
+  MarketplaceCounty,
   MarketplaceIntent,
   MarketplaceSort,
   MarketplaceType,
-  MarketplaceWhere,
 } from '@ethanel/contracts/marketplace-search';
 
 /**
@@ -74,22 +76,73 @@ export const landingIntentIds: readonly MarketplaceIntent[] = [
   'short-stay',
 ];
 
-export const whereOptions: readonly { value: MarketplaceWhere; label: string; coming?: true }[] = [
+/** Every county, alphabetical, with "Anywhere in Kenya" first. Search is nationwide. */
+export const countyLabels: Record<KenyaCounty, string> = {
+  baringo: 'Baringo',
+  bomet: 'Bomet',
+  bungoma: 'Bungoma',
+  busia: 'Busia',
+  'elgeyo-marakwet': 'Elgeyo-Marakwet',
+  embu: 'Embu',
+  garissa: 'Garissa',
+  'homa-bay': 'Homa Bay',
+  isiolo: 'Isiolo',
+  kajiado: 'Kajiado',
+  kakamega: 'Kakamega',
+  kericho: 'Kericho',
+  kiambu: 'Kiambu',
+  kilifi: 'Kilifi',
+  kirinyaga: 'Kirinyaga',
+  kisii: 'Kisii',
+  kisumu: 'Kisumu',
+  kitui: 'Kitui',
+  kwale: 'Kwale',
+  laikipia: 'Laikipia',
+  lamu: 'Lamu',
+  machakos: 'Machakos',
+  makueni: 'Makueni',
+  mandera: 'Mandera',
+  marsabit: 'Marsabit',
+  meru: 'Meru',
+  migori: 'Migori',
+  mombasa: 'Mombasa',
+  muranga: "Murang'a",
+  nairobi: 'Nairobi',
+  nakuru: 'Nakuru',
+  nandi: 'Nandi',
+  narok: 'Narok',
+  nyamira: 'Nyamira',
+  nyandarua: 'Nyandarua',
+  nyeri: 'Nyeri',
+  samburu: 'Samburu',
+  siaya: 'Siaya',
+  'taita-taveta': 'Taita-Taveta',
+  'tana-river': 'Tana River',
+  'tharaka-nithi': 'Tharaka-Nithi',
+  'trans-nzoia': 'Trans Nzoia',
+  turkana: 'Turkana',
+  'uasin-gishu': 'Uasin Gishu (Eldoret)',
+  vihiga: 'Vihiga',
+  wajir: 'Wajir',
+  'west-pokot': 'West Pokot',
+};
+
+export const countyOptions: readonly { value: MarketplaceCounty; label: string }[] = [
   { value: 'anywhere', label: 'Anywhere in Kenya' },
-  { value: 'nairobi-kilimani', label: 'Nairobi — Kilimani' },
-  { value: 'nairobi-westlands', label: 'Nairobi — Westlands' },
-  { value: 'nairobi-ruaka', label: 'Nairobi — Ruaka' },
-  { value: 'kiambu-ruiru', label: 'Kiambu — Ruiru' },
-  { value: 'kiambu-thika', label: 'Kiambu — Thika' },
-  { value: 'kiambu-juja', label: 'Kiambu — Juja' },
-  { value: 'kajiado-kitengela', label: 'Kajiado — Kitengela' },
-  { value: 'kajiado-isinya', label: 'Kajiado — Isinya' },
-  { value: 'kajiado-ongata-rongai', label: 'Kajiado — Ongata Rongai' },
-  { value: 'machakos-syokimau', label: 'Machakos — Syokimau' },
-  { value: 'machakos-athi-river', label: 'Machakos — Athi River' },
-  { value: 'machakos-kangundo-road', label: 'Machakos — Kangundo Road' },
-  { value: 'mombasa', label: 'Mombasa (coming)', coming: true },
-  { value: 'nakuru', label: 'Nakuru (coming)', coming: true },
+  ...(Object.entries(countyLabels) as [KenyaCounty, string][]).map(([value, label]) => ({
+    value,
+    label,
+  })),
+];
+
+export const statusFilterOptions: readonly { value: ListingStatusFilter; label: string }[] = [
+  { value: 'any', label: 'Any status' },
+  { value: 'vacant', label: 'Vacant' },
+  { value: 'booked', label: 'Booked' },
+  { value: 'let', label: 'Let' },
+  { value: 'under-offer', label: 'Under offer' },
+  { value: 'sold', label: 'Sold' },
+  { value: 'coming-soon', label: 'Coming soon' },
 ];
 
 export const typeOptions: readonly { value: MarketplaceType; label: string }[] = [
@@ -168,7 +221,9 @@ export const sortOptions: readonly { value: MarketplaceSort; label: string }[] =
 
 export const searchBarCopy = {
   segmentsLabel: 'What are you looking for?',
-  where: 'Where',
+  county: 'County',
+  area: 'Town, estate or road',
+  areaPlaceholder: 'e.g. Kilimani, Nyali, Milimani',
   lookingFor: 'Looking for',
   budget: 'Budget',
   search: 'Search',

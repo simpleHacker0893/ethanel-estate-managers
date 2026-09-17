@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
 
-import { PlaceholderPage } from '@/app/(marketing)/_components/placeholder-page';
+import { ContentPage } from '@/app/(marketing)/_components/content-page';
+import { terms } from '@/content/legal';
 
-export const metadata: Metadata = { title: 'Terms of service.' };
+export const metadata: Metadata = { title: terms.title };
 
-/** Server. Placeholder; the designed page ships in a later sprint. */
-export default function Page() {
-  return (
-    <PlaceholderPage
-      eyebrow="Terms"
-      title="Terms of service."
-      body="The full terms are being finalised with counsel."
-    />
-  );
+/** Server. Draft terms pending counsel. */
+export default function TermsPage() {
+  return <ContentPage {...terms} />;
 }

@@ -8,6 +8,7 @@ export function landingJsonLd(): string {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: site.name,
+    alternateName: site.wordmark,
     url: origin,
     logo: `${origin}/opengraph-image`,
     address: { '@type': 'PostalAddress', addressLocality: 'Nairobi', addressCountry: 'KE' },

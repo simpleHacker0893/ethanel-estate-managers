@@ -33,9 +33,9 @@ connection; keeping to that today would mean shipping nothing that signs in.
 - Status codes: under Cache Components the response streams before a layout guard resolves,
   so a refusal renders `app/forbidden.tsx` with HTTP 200 and none of the target's data; a
   signed-out visitor still gets a real 307 from `proxy.ts`. A real 403 would need the
-  membership check in the proxy, i.e. a database read per request there; declined (Q-27).
+  membership check in the proxy, i.e. a database read per request there; declined (Q-37).
 
-- `QUESTIONS.md` Q-22 tracks the removal of direct DB access from `apps/web`.
+- `QUESTIONS.md` Q-32 tracks the removal of direct DB access from `apps/web`.
 - `DATABASE_URL` and the Clerk keys are runtime configuration of `web`; CI uses a placeholder
   production-format publishable key and a Postgres service container.
 - A dedicated Neon role per service (`identity_svc`, …) replaces `ethanel_web` when services

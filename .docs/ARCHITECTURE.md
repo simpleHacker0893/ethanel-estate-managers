@@ -67,6 +67,16 @@ postings, never typed.
   endpoint on `web`.
 - Dashboard, ledger, landlord portal: live reads, no `'use cache'`, streamed under `<Suspense>`.
 - Valkey holds rate-limit counters and short-lived caches only.
+- Scene photos (Sprint 002) resolve through the Unsplash API inside `'use cache'` when a key is
+  present at build; without it the slot defers with `connection()` so the page stays a partial
+  prerender and photos appear as soon as the key is set.
+
+## Assistant (interim)
+
+Until `assistant-svc` exists, `apps/web/app/api/assistant/*` hosts the chat (SSE), transcribe
+and speak routes over provider interfaces in `apps/web/lib/assistant`. NVIDIA NIM is the first
+provider; a scripted demo provider keeps the site working without a key. No conversation is
+stored. When the service lands, the routes proxy to it and the interfaces move to the chassis.
 
 ## Delivery
 

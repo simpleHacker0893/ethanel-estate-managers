@@ -2,17 +2,19 @@ import type { Route } from 'next';
 
 /** Site-wide copy: brand, footer, public contact. Landing copy lives in landing.ts. */
 export const site = {
-  name: 'Ethanel',
-  title: 'Ethanel — Property management for Kenya',
+  /** Legal and public name. The wordmark stays "Ethanel" with the descriptor beneath it. */
+  name: 'Ethanel Estate Managers',
+  wordmark: 'Ethanel',
+  wordmarkSub: 'Estate Managers',
+  shortName: 'Ethanel',
+  title: 'Ethanel Estate Managers — Property management for Kenya',
   description:
     'Ethanel runs your letting business end to end — leases, M-Pesa rent collection, repair requests and landlord remittances — on WhatsApp, the channel your residents already use.',
   tagline:
     "Property management and a marketplace for Kenya's letting firms, landlords, residents and buyers.",
   locality: 'Nairobi, Kenya',
-  /** Rendered when NEXT_PUBLIC_WHATSAPP_NUMBER is unset. Visibly a placeholder. */
-  whatsappPlaceholder: '+254 7XX XXX XXX',
   whatsappUs: 'WhatsApp us',
-  copyright: '© 2026 Ethanel · Nairobi, Kenya',
+  copyright: '© 2026 Ethanel Estate Managers · Nairobi, Kenya',
   languages: 'English · Kiswahili (coming)',
 } as const;
 
@@ -36,11 +38,11 @@ export const footerColumns: readonly FooterColumn[] = [
   {
     heading: 'Solutions',
     links: [
-      { label: 'Letting firms', href: '/solutions' },
-      { label: 'Land-selling companies', href: '/solutions' },
-      { label: 'Landlords', href: '/solutions' },
-      { label: 'Caretakers', href: '/solutions' },
-      { label: 'Residents', href: '/solutions' },
+      { label: 'Letting firms', href: '/solutions/letting-firms' },
+      { label: 'Land-selling companies', href: '/solutions/land-selling-companies' },
+      { label: 'Landlords', href: '/solutions/landlords' },
+      { label: 'Caretakers', href: '/solutions/caretakers' },
+      { label: 'Residents', href: '/solutions/residents' },
     ],
   },
   {

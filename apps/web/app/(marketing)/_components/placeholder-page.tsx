@@ -22,7 +22,7 @@ export function PlaceholderPage({
       {body ? <p className="mt-4 max-w-xl text-body-l">{body}</p> : null}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Button asChild variant="accent">
-          <Link href="/#demo">Book a demo</Link>
+          <Link href="/demo">Book a demo</Link>
         </Button>
         <Button asChild variant="secondary">
           <Link href="/">Back to the start</Link>

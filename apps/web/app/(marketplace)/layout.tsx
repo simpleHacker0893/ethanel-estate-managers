@@ -1,3 +1,4 @@
+import { AssistantMount } from '@/components/assistant/assistant-mount';
 import { Footer } from '@/components/site/footer';
 import { Header } from '@/components/site/header';
 
@@ -10,6 +11,7 @@ export default function MarketplaceLayout({ children }: LayoutProps<'/'>) {
         {children}
       </main>
       <Footer />
+      <AssistantMount />
     </>
   );
 }

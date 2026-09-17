@@ -52,22 +52,68 @@ operator must confirm or correct. Nothing here appears in product copy as fact.
 - **Q-20** `// ASSUMPTION:` The chassis and web use ESLint 9 (the last line `eslint-plugin-jsx-a11y`
   supports). Renovate will move the repo to ESLint 10 when that plugin publishes support.
 
-## Assumptions made in Sprint 002 (first slice)
+## Assumptions made in Sprint 002
 
-- **Q-22** `// ASSUMPTION:` `apps/web` reads Neon directly through `@ethanel/db` until
+- **Q-22** `// ASSUMPTION:` Pricing tiers and KES amounts in `content/pricing.ts` (Free KES 0 up
+  to 5 units; Starter KES 2,500/month up to 50; Growth KES 9,500/month up to 300; Enterprise
+  custom) are introductory placeholders drafted for review and labelled "Introductory pricing,
+  subject to change" on the page. Confirm or replace before any agreement quotes them.
+- **Q-23** `// ASSUMPTION:` Scene photos are hotlinked from Unsplash through the API under the
+  Unsplash licence (attribution with UTM links, download endpoint triggered on render, no
+  redistribution). If the licence terms or hotlinking are not acceptable, switch the manifest
+  entries to `source: 'illustration'` or to owned photos in `public/`.
+- **Q-24** `// ASSUMPTION:` NVIDIA endpoints: chat `POST {NVIDIA_CHAT_BASE_URL}/chat/completions`
+  with model `nvidia/nemotron-3-super-120b-a12b`; Parakeet ASR via NVCF function
+  `1598d209-5e27-4d3c-8079-4751568b1081` at `/v1/audio/transcriptions`; Magpie TTS via NVCF
+  function `877104f7-e885-42b9-8de8-f6e4c6303969` at `/v1/audio/speech` (the hosted Magpie API
+  is documented as gRPC, so the HTTP call may return non-audio; the widget then uses the
+  browser voice). None could be called from the build sandbox. Verify on build.nvidia.com and
+  correct the env defaults.
+- **Q-25** `// ASSUMPTION:` Photo choices in `content/images.ts` are unverified in the sandbox
+  (photo hosts unreachable). Review on staging with `UNSPLASH_ACCESS_KEY` set: `about-story`
+  `ZY0u6We7rDE`, `about-kenya` `jTyDovBPQ4k`, `about-launch` `e-oZ4yQelik`,
+  `solutions-letting-firms` `1Uwcoo-ttjY`; every other slot resolves by search query
+  (solutions-_, company/careers/press heroes, press-story-_, the 16 `listing-*` slots keyed by
+  property type and setting). Portraits are illustration-only with initials until real photos
+  are supplied.
+- **Q-26** `// ASSUMPTION:` About page facts as told by the operator: founded 2024 in Kiambu
+  County by Loise Ndirangu and Racheal Wangui (sisters, advocates) with Njuguna Njenga as Chief
+  Technology Officer; the story is limited to their property and land-transaction experience.
+  Nothing else about the team is claimed. Confirm spellings and titles.
+- **Q-27** `// ASSUMPTION:` Press case studies are illustrative: fictional organizations
+  (Kiambu letting firm, Kajiado land-selling company, a landlord) with example figures, each
+  carrying the "Illustrative — example figures, not customer data" tag. Press contact
+  (`press@ethanel.example`) and spokesperson are placeholders.
+- **Q-28** `// ASSUMPTION:` Sample listing coordinates are approximate town or estate centres,
+  good enough to open Google Maps in the right neighbourhood, never a parcel. `listing-svc`
+  will carry surveyed coordinates per listing.
+- **Q-29** `// ASSUMPTION:` Search is nationwide across all 47 counties with a free-text area
+  (Q-05's "(coming)" labels are withdrawn). The 76 sample listings in `content/listings.ts` are
+  original, written after a reference pass over Kenyan property sites for style only; no
+  advert, description, address or photo was copied; managing organizations are fictional and
+  labelled "Sample listing" on every card. Replace with `listing-svc` data, never with scraped
+  adverts.
+- **Q-30** `// ASSUMPTION:` "Sign in to …" gating (viewings, listing a property, alerts) is a
+  page that validates and displays `next` until Clerk lands; the marketplace search stays
+  public. Clerk's `afterSignInUrl` must honour the same-origin `next` path.
+- **Q-31** `// ASSUMPTION:` Assistant rate limits are 30 chat turns and 20 media calls per IP
+  per 10 minutes, in-memory (same caveat as Q-11). Conversations are not stored anywhere.
+- **Q-32** `// ASSUMPTION:` `apps/web` reads Neon directly through `@ethanel/db` until
   `identity-svc`, `property-svc` and `money-svc` exist (ADR-001). Remove when the services land.
-- **Q-23** `// ASSUMPTION:` Demo agency fees (8% and 10% in basis points on the seeded management
+  Clerk has landed, which closes Q-10; the `/sign-in?next=` handoff of Q-30 is honoured by the
+  Clerk sign-in page (same-origin paths only).
+- **Q-33** `// ASSUMPTION:` Demo agency fees (8% and 10% in basis points on the seeded management
   agreements) are sample values so the landlord statement has a figure. No real default exists.
-- **Q-24** `// ASSUMPTION:` Clerk organization roles map `owner`/`admin` → `org:admin` and
+- **Q-34** `// ASSUMPTION:` Clerk organization roles map `owner`/`admin` → `org:admin` and
   `staff`/`caretaker` → `org:member`; the finer role lives in `identity.memberships.role`.
   Landlords and residents are Clerk users without an organization membership. (Answers Q-15 for
   now; a caretaker can belong to more than one organization by having more than one row.)
-- **Q-25** `// ASSUMPTION:` Demo accounts share one password shown on the landing page. Accept the
+- **Q-35** `// ASSUMPTION:` Demo accounts share one password shown on the landing page. Accept the
   risk for a sandbox instance; production instances must not seed these accounts.
-- **Q-26** `// ASSUMPTION:` The Neon compute (`ap-southeast-1`) is reachable from the runtime over
+- **Q-36** `// ASSUMPTION:` The Neon compute (`ap-southeast-1`) is reachable from the runtime over
   the `-pooler` endpoint with the WebSocket serverless driver; migrations use the direct endpoint.
 
-- **Q-27** `// ASSUMPTION:` A refused request to a signed-in surface renders the forbidden page
+- **Q-37** `// ASSUMPTION:` A refused request to a signed-in surface renders the forbidden page
   with HTTP 200 (Cache Components streams the response before the layout guard resolves).
   Acceptable for a page; revisit if an API consumer or a crawler needs the real status.
 

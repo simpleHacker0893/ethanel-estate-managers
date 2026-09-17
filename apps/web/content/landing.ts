@@ -12,7 +12,7 @@ export const landing = {
     title: 'Rent in. Landlords paid. Every shilling accounted for.',
     subtitle:
       'Ethanel runs your letting business end to end — leases, M-Pesa rent collection, repair requests and landlord remittances — on WhatsApp, the channel your residents already use.',
-    primaryCta: { label: 'Book a demo', href: '/#demo' as Route },
+    primaryCta: { label: 'Book a demo', href: '/demo' as Route },
     secondaryCta: { label: 'Find a home or plot', href: '/marketplace' as Route },
     launchLine: 'Launching in Nairobi, Kiambu, Kajiado and Machakos',
     chips: [
@@ -58,7 +58,7 @@ export const landing = {
         'Rent runs over M-Pesa, every payment allocated to the right lease',
         'Landlord statements and remittances on the day the agreement says',
       ],
-      cta: { label: 'See how it works for agencies', href: '/solutions' as Route },
+      cta: { label: 'See how it works for agencies', href: '/solutions/letting-firms' as Route },
     },
     residents: {
       eyebrow: 'For residents and buyers',
@@ -161,41 +161,8 @@ export const landing = {
     note: 'Prices and listings shown are samples for illustration.',
     viewingCta: 'Book a viewing',
     whatsappCta: 'WhatsApp',
-    listings: [
-      {
-        id: 'sample-kilimani-2bed',
-        chip: '2-bed unit · To let',
-        intent: 'rent',
-        price: 'KES 45,000',
-        per: '/ month',
-        title: 'Bright two-bedroom with balcony, borehole water',
-        location: 'Kilimani, Nairobi',
-        agency: 'Riverside Lettings',
-        photo: 'a',
-      },
-      {
-        id: 'sample-kitengela-plot',
-        chip: 'Plot · For sale',
-        intent: 'land',
-        price: 'KES 2,400,000',
-        per: '',
-        title: '1/8 acre residential plot, tarmac access',
-        location: 'Kitengela, Kajiado',
-        agency: 'Savannah Land Co.',
-        photo: 'b',
-      },
-      {
-        id: 'sample-ruiru-3bed',
-        chip: '3-bed home · For sale',
-        intent: 'sale',
-        price: 'KES 9,800,000',
-        per: '',
-        title: 'Three-bedroom maisonette in a gated court',
-        location: 'Ruiru, Kiambu',
-        agency: 'Kiambu Homes Agency',
-        photo: 'c',
-      },
-    ] as const,
+    /** Three cards from content/listings.ts (the same sample data the marketplace uses). */
+    listingIds: ['rl-kilimani-2bed', 'sl-kitengela-plot', 'kh-ruiru-3bed'] as const,
   },
 
   trust: {

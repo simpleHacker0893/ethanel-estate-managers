@@ -8,28 +8,46 @@ import { Button } from '@ethanel/ui/components/button';
 
 import { ListingCard } from '@/components/marketplace/listing-card';
 import { marketplaceCopy } from '@/content/listings';
-import { intentSegments } from '@/content/marketplace';
-import { formatKes, searchListings } from '@/lib/listings';
+import { countyLabels, intentSegments } from '@/content/marketplace';
+import { formatKes, formatListedDate, searchListings } from '@/lib/listings';
 
 /**
- * Server, cached. Keyed by the parsed search object; `listings` tag is what listing-svc
- * revalidates when an organization publishes or withdraws a listing.
+ * The search itself is cached (hours, tag `listings`) so listing-svc can revalidate it later;
+ * cards render outside the cache because their photo slots may defer to request time.
  */
 // eslint-disable-next-line @typescript-eslint/require-await -- 'use cache' requires an async function
-export async function ResultsGrid({ search }: { search: MarketplaceSearch }) {
+async function cachedSearch(search: MarketplaceSearch) {
   'use cache';
   cacheLife('hours');
   cacheTag('listings');
+  return searchListings(search);
+}
 
-  const listings = searchListings(search);
+/** Server. Heading, count, grid or empty state, sample note. */
+export async function ResultsGrid({ search }: { search: MarketplaceSearch }) {
+  const listings = await cachedSearch(search);
   const segment = intentSegments.find((s) => s.id === search.intent);
   const widenHref = serializeMarketplaceSearch('/marketplace', { ...search, budget: 'any' });
+  const anywhereHref = serializeMarketplaceSearch('/marketplace', {
+    ...search,
+    county: 'anywhere',
+    area: '',
+  });
+  const place =
+    search.area.trim() !== ''
+      ? search.area.trim()
+      : search.county === 'anywhere'
+        ? 'Kenya'
+        : countyLabels[search.county];
 
   return (
     <div>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-display-l">{segment?.heading}</h1>
+          <h1 className="text-display-l">
+            {segment?.heading}
+            {place === 'Kenya' ? '' : ` in ${place}`}
+          </h1>
           <p className="mt-2 text-body-m text-mist-500">{marketplaceCopy.lede}</p>
         </div>
         <p className="text-body-s font-semibold text-mist-700 kes" aria-live="polite">
@@ -50,8 +68,13 @@ export async function ResultsGrid({ search }: { search: MarketplaceSearch }) {
             <Button asChild variant="primary">
               <Link href={widenHref}>{marketplaceCopy.widenBudget}</Link>
             </Button>
+            {search.county !== 'anywhere' || search.area ? (
+              <Button asChild variant="secondary">
+                <Link href={anywhereHref}>Search all of Kenya</Link>
+              </Button>
+            ) : null}
             <Button asChild variant="secondary">
-              <Link href="/marketplace#alerts">{marketplaceCopy.getAlert}</Link>
+              <Link href="/sign-in?next=%2Fmarketplace%23alerts">{marketplaceCopy.getAlert}</Link>
             </Button>
           </div>
         </div>
@@ -63,16 +86,21 @@ export async function ResultsGrid({ search }: { search: MarketplaceSearch }) {
                 id={l.id}
                 chip={l.chip}
                 intent={l.intent}
+                status={l.status}
+                statusLabel={marketplaceCopy.statusLabels[l.status]}
                 price={formatKes(l.priceKes)}
                 per={segment?.per ?? ''}
                 title={l.title}
                 meta={l.meta}
                 location={l.location}
+                coordinates={l.coordinates}
                 agency={l.agency}
+                listedLabel={`${marketplaceCopy.listedPrefix} ${formatListedDate(l.publishedAt)}`}
                 photo={l.photo}
                 sample
                 viewingLabel={marketplaceCopy.viewingCta}
                 whatsappLabel={marketplaceCopy.whatsappCta}
+                mapLabel={marketplaceCopy.openMap}
               />
             </li>
           ))}
